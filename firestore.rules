@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Allow read access to community components for everyone.
+    // Allow create, update, delete for anyone, as there's no user system.
+    // In a real public app, you might want to add rate limiting or other security.
+    match /community_components/{componentId} {
+      allow read, write: if true;
+    }
+
+    // All other collections are locked down by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
