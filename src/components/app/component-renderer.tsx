@@ -14,7 +14,7 @@ export function ComponentRenderer({ code, framework, html }: ComponentRendererPr
     // If a full HTML document is provided (e.g., from the server-side image generation flow), use it directly.
     if (html) {
       // Ensure the provided HTML is a full document. If not, wrap it.
-      if (html.trim().startsWith('<')) {
+      if (html.trim().startsWith('<!DOCTYPE html>')) {
         return html;
       }
     }
@@ -42,7 +42,7 @@ export function ComponentRenderer({ code, framework, html }: ComponentRendererPr
 
     const bodyContent = `<div class="render-wrapper">${code}</div>`;
 
-    // Construct the full HTML document for the iframe, including the Tailwind CDN.
+    // Construct the full HTML document for the iframe, including the Tailwind CDN and fonts.
     return `
       <!DOCTYPE html>
       <html>
