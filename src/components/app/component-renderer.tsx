@@ -12,7 +12,12 @@ interface ComponentRendererProps {
 export function ComponentRenderer({ code, framework, html }: ComponentRendererProps) {
   const getIframeSrcDoc = () => {
     // If a full HTML document is provided (e.g., from the server-side image generation flow), use it directly.
-    if (html) return html;
+    if (html) {
+      // Ensure the provided HTML is a full document. If not, wrap it.
+      if (html.trim().startsWith('<')) {
+        return html;
+      }
+    }
 
     // Otherwise, construct the srcDoc for client-side previewing of generated code.
     if (!code) return '';
