@@ -42,11 +42,12 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
     const isAuthPage = pathname === '/login' || pathname === '/signup';
     const isAppPage = pathname.startsWith('/app');
     
-    // This logic remains to protect routes if a user tries to access them directly
+    // If user is not logged in and tries to access a protected app page, redirect to login
     if (!user && isAppPage) {
       router.push('/login');
     }
     
+    // If user is logged in and tries to access a login/signup page, redirect to the dashboard
     if (user && isAuthPage) {
       router.push('/app/dashboard');
     }

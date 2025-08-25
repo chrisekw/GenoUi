@@ -35,15 +35,16 @@ export default function SignupPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (state.message === 'Success') {
-      toast({ title: 'Account created successfully!', description: 'You will be redirected momentarily.' });
-      window.location.href = '/app/dashboard';
-    } else if (state.message) {
+    // Rely on FirebaseAuthProvider for redirection.
+    // Only show toast messages here.
+    if (state.message && state.message !== 'Success') {
       toast({
         title: 'Signup Failed',
         description: state.message,
         variant: 'destructive',
       });
+    } else if (state.message === 'Success') {
+        toast({ title: 'Account created!', description: 'Redirecting...' });
     }
   }, [state, toast]);
 

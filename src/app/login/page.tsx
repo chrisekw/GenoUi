@@ -35,15 +35,16 @@ export default function LoginPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (state.message === 'Success') {
-      toast({ title: 'Login successful!', description: 'Redirecting...' });
-      window.location.href = '/app/dashboard';
-    } else if (state.message) {
+    // Rely on FirebaseAuthProvider for redirection.
+    // Only show toast messages here.
+    if (state.message && state.message !== 'Success') {
       toast({
         title: 'Login Failed',
         description: state.message,
         variant: 'destructive',
       });
+    } else if (state.message === 'Success') {
+        toast({ title: 'Login successful!', description: 'Redirecting...' });
     }
   }, [state, toast]);
 
