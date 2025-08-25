@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -18,11 +17,11 @@ export function Footer() {
 
             <div className="flex items-center gap-4">
                 <a href="https://findly.tools/genoui?utm_source=genoui" target="_blank">
-                    <img 
-                        src="https://findly.tools/badges/findly-tools-badge-light.svg" 
-                        alt="Featured on findly.tools" 
-                        width="150" 
-                    />
+                  <img 
+                    src="https://findly.tools/badges/findly-tools-badge-light.svg" 
+                    alt="Featured on findly.tools" 
+                    width="150" 
+                  />
                 </a>
                  <a target="_blank" rel="noopener noreferrer" href="https://saaswheel.com"><img style={{height: '54px'}} height="54" src="https://saaswheel.com/assets/images/badge.png" alt="SaaS Wheel" /></a>
             </div>
