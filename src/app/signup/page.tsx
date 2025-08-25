@@ -12,9 +12,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { Logo } from "@/components/icons/logo"
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { signup } from '@/app/actions';
-import { useEffect } from "react";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
@@ -32,7 +32,7 @@ function SubmitButton() {
 }
 
 export default function SignupPage() {
-  const [state, formAction] = useFormState(signup, initialState);
+  const [state, formAction] = useActionState(signup, initialState);
   const router = useRouter();
   const { toast } = useToast();
 
