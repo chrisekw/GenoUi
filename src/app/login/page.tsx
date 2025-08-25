@@ -15,7 +15,6 @@ import { Logo } from "@/components/icons/logo"
 import { useFormStatus } from 'react-dom';
 import { useActionState, useEffect } from "react";
 import { login } from '@/app/actions';
-import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
 const initialState = {
@@ -38,7 +37,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (state.message === 'Success') {
       toast({ title: 'Login successful!', description: 'Redirecting...' });
-      // The FirebaseAuthProvider will handle the redirect automatically.
+      window.location.href = '/app/dashboard';
     } else if (state.message) {
       toast({
         title: 'Login Failed',

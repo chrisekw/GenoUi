@@ -41,12 +41,16 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
 
     const isAuthPage = pathname === '/login' || pathname === '/signup';
     const isAppPage = pathname.startsWith('/app');
-
-    if (user && isAuthPage) {
-      router.push('/app/dashboard');
-    } else if (!user && isAppPage) {
+    
+    // This logic remains to protect routes if a user tries to access them directly
+    if (!user && isAppPage) {
       router.push('/login');
     }
+    
+    if (user && isAuthPage) {
+      router.push('/app/dashboard');
+    }
+
   }, [user, loading, pathname, router]);
 
   if (loading) {

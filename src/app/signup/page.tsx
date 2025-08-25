@@ -15,7 +15,6 @@ import { Logo } from "@/components/icons/logo"
 import { useFormStatus } from 'react-dom';
 import { signup } from '@/app/actions';
 import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
 const initialState = {
@@ -37,8 +36,8 @@ export default function SignupPage() {
 
   useEffect(() => {
     if (state.message === 'Success') {
-      toast({ title: 'Account created successfully!', description: 'You are now logged in and will be redirected.' });
-       // The FirebaseAuthProvider will handle the redirect automatically.
+      toast({ title: 'Account created successfully!', description: 'You will be redirected momentarily.' });
+      window.location.href = '/app/dashboard';
     } else if (state.message) {
       toast({
         title: 'Signup Failed',
