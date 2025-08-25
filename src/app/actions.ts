@@ -8,16 +8,14 @@ import { animatePrompt, AnimatePromptOutput } from '@/ai/flows/animate-prompt-fl
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
 import type { GalleryItem } from '@/lib/gallery-items';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase'; // We can't use the client-side auth object on the server, so we'll need to re-initialize
+import { auth } from '@/lib/firebase';
 
-// This is a simplified example. In a real app, you would handle errors more gracefully.
 async function firebaseAction<T>(action: (auth: any) => Promise<T>): Promise<{ data?: T, error?: string }> {
   try {
     const data = await action(auth);
     return { data };
   } catch (error: any) {
     console.error('Firebase action error:', error.code, error.message);
-    // Provide a user-friendly error message
     let errorMessage = 'An unexpected error occurred.';
     switch (error.code) {
       case 'auth/invalid-email':
@@ -35,7 +33,7 @@ async function firebaseAction<T>(action: (auth: any) => Promise<T>): Promise<{ d
         errorMessage = 'The password is too weak. It must be at least 6 characters long.';
         break;
       default:
-        errorMessage = error.message;
+        errorMessage = error.message || 'An unknown error occurred. Please try again.';
         break;
     }
     return { error: errorMessage };

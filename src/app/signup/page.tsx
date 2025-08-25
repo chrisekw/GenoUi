@@ -16,6 +16,7 @@ import { useFormStatus } from 'react-dom';
 import { signup } from '@/app/actions';
 import { useActionState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from 'next/navigation';
 
 const initialState = {
   message: '',
@@ -33,10 +34,9 @@ function SubmitButton() {
 export default function SignupPage() {
   const [state, formAction] = useActionState(signup, initialState);
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
-    // Rely on FirebaseAuthProvider for redirection.
-    // Only show toast messages here.
     if (state.message && state.message !== 'Success') {
       toast({
         title: 'Signup Failed',
@@ -45,8 +45,9 @@ export default function SignupPage() {
       });
     } else if (state.message === 'Success') {
         toast({ title: 'Account created!', description: 'Redirecting...' });
+        // The FirebaseAuthProvider will handle the redirect.
     }
-  }, [state, toast]);
+  }, [state, toast, router]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">

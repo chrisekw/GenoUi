@@ -35,9 +35,7 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
   }, []);
 
   useEffect(() => {
-    if (loading) {
-      return;
-    }
+    if (loading) return;
 
     const isAuthPage = pathname === '/login' || pathname === '/signup';
     const isAppPage = pathname.startsWith('/app');
