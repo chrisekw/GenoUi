@@ -35,23 +35,20 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
   }, []);
 
   useEffect(() => {
-    // Wait until the loading is complete before doing any routing
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     const isAuthPage = pathname === '/login' || pathname === '/signup';
     const isAppPage = pathname.startsWith('/app');
 
-    // If the user is logged in and tries to access an auth page (login/signup), redirect to dashboard
     if (user && isAuthPage) {
       router.push('/app/dashboard');
-    }
-    // If the user is not logged in and tries to access a protected page, redirect to login
-    else if (!user && isAppPage) {
+    } else if (!user && isAppPage) {
       router.push('/login');
     }
   }, [user, loading, pathname, router]);
 
-  // While checking user auth, show a loading screen to prevent flicker or premature redirection
   if (loading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
