@@ -8,7 +8,7 @@ import { Lightbulb, Code as CodeIcon, Eye, ArrowLeft, Share2, Smartphone, Tablet
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Wand2 } from 'lucide-react';
-import type { Framework } from './main-layout';
+import type { Framework } from './page-content';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '../ui/dialog';
 import { Input } from '../ui/input';

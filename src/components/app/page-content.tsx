@@ -322,7 +322,7 @@ export function PageContent() {
     setLayoutSuggestions('');
     setPrompt('');
     setImageUrl(null);
-    router.replace('/app');
+    router.replace('/app/dashboard');
   }
 
   return (

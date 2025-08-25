@@ -78,12 +78,19 @@ export default function LandingPage() {
             <Logo className="w-7 h-7 text-white" />
             <span className="text-xl font-bold">GenoUI</span>
           </Link>
-          <Button asChild variant="secondary" className="hidden sm:flex">
-             <Link href="/app">
-                Go to App
-                <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="ghost" className="hidden sm:flex">
+              <Link href="/login">
+                  Login
+              </Link>
+            </Button>
+            <Button asChild variant="secondary" className="hidden sm:flex">
+              <Link href="/signup">
+                  Sign Up
+                  <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -101,7 +108,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
               <Button asChild size="lg" className="bg-white text-black hover:bg-neutral-200">
-                 <Link href="/app">
+                 <Link href="/signup">
                     Try GenoUi Free
                     <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
@@ -228,7 +235,7 @@ export default function LandingPage() {
                     Save <span className="text-white font-medium">weeks</span> of development time and ship your vision faster than ever.
                 </p>
                  <Button asChild size="lg" className="bg-white text-black hover:bg-neutral-200 mt-8">
-                     <Link href="/app">
+                     <Link href="/signup">
                         Start Building for Free
                         <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>

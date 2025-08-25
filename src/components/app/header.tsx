@@ -15,12 +15,12 @@ import Link from 'next/link';
 import { Sidebar } from './sidebar';
 import { Logo } from '../icons/logo';
 
-export function Header() {
+export function Header({ isUser }: { isUser: boolean}) {
 
     return (
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
             <div className="flex items-center gap-2 md:hidden">
-                 <Link href="/app" className="flex items-center gap-2 font-semibold">
+                 <Link href="/app/dashboard" className="flex items-center gap-2 font-semibold">
                     <Logo className="h-6 w-6" />
                     <span className="">GenoUI</span>
                 </Link>
@@ -43,7 +43,7 @@ export function Header() {
                             <SheetHeader>
                                 <SheetTitle className="sr-only">Main Menu</SheetTitle>
                             </SheetHeader>
-                           <Sidebar isMobile />
+                           <Sidebar isMobile isUser={isUser} />
                         </SheetContent>
                     </Sheet>
                 </div>
