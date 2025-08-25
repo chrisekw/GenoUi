@@ -10,21 +10,14 @@ export default function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isUser, setIsUser] = React.useState(false);
-
-  React.useEffect(() => {
-    // In a real app, you'd check for a session token here.
-    // For now, we'll simulate a logged-in user.
-    setIsUser(true);
-  }, []);
-
+  // isUser state is now managed by FirebaseAuthProvider
   return (
     <div className="flex min-h-screen w-full flex-col">
         <div className="hidden md:flex">
-            <Sidebar isUser={isUser} />
+            <Sidebar />
         </div>
         <div className="flex flex-col md:pl-64">
-            <Header isUser={isUser} />
+            <Header isUser={false} />
             {children}
         </div>
     </div>

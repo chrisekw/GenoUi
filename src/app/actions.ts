@@ -7,27 +7,72 @@ import { enhancePrompt, EnhancePromptOutput } from '@/ai/flows/enhance-prompt-fl
 import { animatePrompt, AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
 import type { GalleryItem } from '@/lib/gallery-items';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase'; // We can't use the client-side auth object on the server, so we'll need to re-initialize
 
-// Mock authentication logic. In a real app, this would be handled by an auth provider.
+// This is a simplified example. In a real app, you would handle errors more gracefully.
+async function firebaseAction<T>(action: (auth: any) => Promise<T>): Promise<{ data?: T, error?: string }> {
+  try {
+    const data = await action(auth);
+    return { data };
+  } catch (error: any) {
+    console.error('Firebase action error:', error.code, error.message);
+    // Provide a user-friendly error message
+    let errorMessage = 'An unexpected error occurred.';
+    switch (error.code) {
+      case 'auth/invalid-email':
+        errorMessage = 'Please enter a valid email address.';
+        break;
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        errorMessage = 'Invalid email or password.';
+        break;
+      case 'auth/email-already-in-use':
+        errorMessage = 'This email is already registered. Please login.';
+        break;
+      case 'auth/weak-password':
+        errorMessage = 'The password is too weak. It must be at least 6 characters long.';
+        break;
+      default:
+        errorMessage = error.message;
+        break;
+    }
+    return { error: errorMessage };
+  }
+}
+
 export async function login(prevState: { message: string }, formData: FormData) {
-  const email = formData.get('email');
-  const password = formData.get('password');
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
 
-  // In a real app, you'd validate credentials against a database.
-  // For this mock, we'll accept any non-empty email and password.
-  if (email && password) {
-    // Here you would set a session cookie or token.
-    // For this mock, we'll just return a success message.
-    return { message: 'Success' };
+  if (!email || !password) {
+      return { message: 'Email and password are required.' };
+  }
+  
+  const result = await firebaseAction(auth => signInWithEmailAndPassword(auth, email, password));
+
+  if (result.error) {
+    return { message: result.error };
   }
 
-  return { message: 'Invalid email or password' };
+  return { message: 'Success' };
 }
 
 export async function signup(prevState: { message:string }, formData: FormData) {
-  const email = formData.get('email');
-  // In a real app, you would save the new user to the database.
-  console.log('Signing up user with email:', email);
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+
+  if (!email || !password) {
+      return { message: 'Email and password are required.' };
+  }
+
+  const result = await firebaseAction(auth => createUserWithEmailAndPassword(auth, email, password));
+  
+  if (result.error) {
+    return { message: result.error };
+  }
+
   return { message: 'Success' };
 }
 

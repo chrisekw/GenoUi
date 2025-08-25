@@ -6,8 +6,6 @@ import { Button } from '@/components/ui/button';
 import {
     Sheet,
     SheetContent,
-    SheetHeader,
-    SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
@@ -40,10 +38,7 @@ export function Header({ isUser }: { isUser: boolean}) {
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="sm:max-w-xs p-0 w-64">
-                            <SheetHeader>
-                                <SheetTitle className="sr-only">Main Menu</SheetTitle>
-                            </SheetHeader>
-                           <Sidebar isMobile isUser={isUser} />
+                           <Sidebar isMobile />
                         </SheetContent>
                     </Sheet>
                 </div>

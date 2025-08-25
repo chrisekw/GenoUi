@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Providers } from './providers';
 import { Analytics } from '@vercel/analytics/react';
 import { cn } from '@/lib/utils';
+import { FirebaseAuthProvider } from './auth-provider';
 
 const BASE_URL = 'https://genoui.vercel.app';
 
@@ -103,8 +104,10 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <Providers>
+          <FirebaseAuthProvider>
             {children}
             <Toaster />
+          </FirebaseAuthProvider>
         </Providers>
         <Analytics />
       </body>
