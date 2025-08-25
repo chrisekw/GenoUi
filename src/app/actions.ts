@@ -14,7 +14,8 @@ export async function login(prevState: { message: string }, formData: FormData) 
   const password = formData.get('password');
 
   // In a real app, you'd validate credentials against a database.
-  if (email === 'user@example.com' && password === 'password') {
+  // For this mock, we'll accept any non-empty email and password.
+  if (email && password) {
     // Here you would set a session cookie or token.
     // For this mock, we'll just return a success message.
     return { message: 'Success' };
@@ -23,7 +24,7 @@ export async function login(prevState: { message: string }, formData: FormData) 
   return { message: 'Invalid email or password' };
 }
 
-export async function signup(prevState: { message: string }, formData: FormData) {
+export async function signup(prevState: { message:string }, formData: FormData) {
   const email = formData.get('email');
   // In a real app, you would save the new user to the database.
   console.log('Signing up user with email:', email);
