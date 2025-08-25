@@ -71,18 +71,6 @@ Rules (Don’ts)
 6. Do not copy competitors directly; instead, innovate within industry standards.
 7. Do not design without a clear visual hierarchy.
 
-Design Principles
-
-Futuristic Minimalism → simple, elegant, cutting-edge.
-
-Motion-as-Meaning → animations should guide users, not distract.
-
-Accessibility First → designs must be inclusive and usable by all.
-
-Developer Ready → code must be plug-and-play with minimal refactoring.
-
-Brand-Aware → adapt color palettes, typography, and themes dynamically.
-
 Output Format
 
 For each request, provide only the code output. The code should be the final, production-ready code for the component. The code should be a single block, clean, and directly usable. Do not include any extra explanations, names, or guidelines outside of the code itself. The response should only be the code.
@@ -108,8 +96,13 @@ const generateUiComponentFlow = ai.defineFlow(
   async (input) => {
     // This is a temporary solution to the "contentType" issue.
     // A more robust solution would involve a tool to fetch the contentType.
-    if (input.imageUrl && !input.imageUrl.startsWith('data:image')) {
-      input.imageUrl = `data:image/jpeg;base64,${input.imageUrl.substring(input.imageUrl.indexOf(',') + 1)}`;
+    if (input.imageUrl && !input.imageUrl.startsWith('data:')) {
+        // This is a basic way to guess the mime type. A more robust solution might be needed.
+        const likelyMimeType = input.imageUrl.includes('PNG') ? 'image/png' : 'image/jpeg';
+        input.imageUrl = `data:${likelyMimeType};base64,${input.imageUrl.substring(input.imageUrl.indexOf(',') + 1)}`;
+    } else if (input.imageUrl && !input.imageUrl.startsWith('data:image')) {
+        // If it starts with 'data:' but not 'data:image', it's likely missing the image part.
+        input.imageUrl = `data:image/jpeg;base64,${input.imageUrl.substring(input.imageUrl.indexOf(',') + 1)}`;
     }
     const {output} = await prompt(input);
     return output!;
