@@ -136,7 +136,7 @@ export default function LandingPage() {
                         </div>
                     </div>
                      <Image 
-                        src="https://storage.googleapis.com/static-cloud-c2c-content/user-file/e1c25254-8fe4-4e4b-a948-4c0792036780/genoui-demo.png"
+                        src="https://storage.googleapis.com/static-cloud-c2c-content/user-file/141e6a17-ed26-44f2-8735-a136eda85652/genoui-demo.png"
                         width={2400}
                         height={1500}
                         alt="GenoUI application interface showing the prompt input and community components"
