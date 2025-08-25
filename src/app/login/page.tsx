@@ -33,13 +33,12 @@ function SubmitButton() {
 
 export default function LoginPage() {
   const [state, formAction] = useActionState(login, initialState);
-  const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
     if (state.message === 'Success') {
-      toast({ title: 'Login successful!' });
-      router.push('/app/dashboard');
+      toast({ title: 'Login successful!', description: 'Redirecting...' });
+      // The FirebaseAuthProvider will handle the redirect automatically.
     } else if (state.message) {
       toast({
         title: 'Login Failed',
@@ -47,7 +46,7 @@ export default function LoginPage() {
         variant: 'destructive',
       });
     }
-  }, [state, router, toast]);
+  }, [state, toast]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
