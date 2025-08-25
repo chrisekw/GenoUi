@@ -44,6 +44,13 @@ const NavLink = ({ item, isMobile }: { item: typeof navItems[0], isMobile: boole
     return linkComponent;
 };
 
+const UserProfileLink = ({ isMobile, children }: { isMobile: boolean, children: React.ReactNode }) => {
+    if (isMobile) {
+        return <SheetClose asChild>{children}</SheetClose>
+    }
+    return <>{children}</>;
+}
+
 
 const SidebarContent = ({ isMobile = false }) => {
     const { user } = useAuth();
@@ -76,14 +83,14 @@ const SidebarContent = ({ isMobile = false }) => {
         <div className="mt-auto p-4">
             {user ? (
                 <div className="grid gap-2">
-                    <SheetClose asChild={isMobile}>
+                    <UserProfileLink isMobile={isMobile}>
                         <Link href="/app/profile">
                             <Button variant="ghost" className="w-full justify-start">
                                 <User className="mr-2 h-4 w-4" />
                                 Profile
                             </Button>
                         </Link>
-                     </SheetClose>
+                     </UserProfileLink>
                      <Button variant="secondary" onClick={handleSignOut}>
                         <LogOut className="mr-2 h-4 w-4" />
                         Sign Out
@@ -91,20 +98,20 @@ const SidebarContent = ({ isMobile = false }) => {
                  </div>
             ) : (
                 <div className="grid gap-2">
-                     <SheetClose asChild={isMobile}>
+                    <UserProfileLink isMobile={isMobile}>
                         <Link href="/login">
                             <Button variant="outline" className="w-full">
                                <LogIn className="mr-2 h-4 w-4"/> Login
                             </Button>
                         </Link>
-                    </SheetClose>
-                     <SheetClose asChild={isMobile}>
+                    </UserProfileLink>
+                     <UserProfileLink isMobile={isMobile}>
                         <Link href="/signup">
                             <Button className="w-full">
                                Sign Up
                             </Button>
                         </Link>
-                    </SheetClose>
+                    </UserProfileLink>
                 </div>
             )}
         </div>
