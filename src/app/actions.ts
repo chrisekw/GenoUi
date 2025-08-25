@@ -7,7 +7,7 @@ import { enhancePrompt, EnhancePromptOutput } from '@/ai/flows/enhance-prompt-fl
 import { animatePrompt, AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
 import type { GalleryItem } from '@/lib/gallery-items';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 async function firebaseAction<T>(action: (auth: any) => Promise<T>): Promise<{ data?: T, error?: string }> {
