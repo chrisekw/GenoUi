@@ -45,10 +45,11 @@ const NavLink = ({ item, isMobile }: { item: typeof navItems[0], isMobile: boole
 };
 
 const UserProfileLink = ({ isMobile, children }: { isMobile: boolean, children: React.ReactNode }) => {
-    if (isMobile) {
-        return <SheetClose asChild>{children}</SheetClose>
-    }
-    return <>{children}</>;
+    const Wrapper = isMobile ? SheetClose : React.Fragment;
+    const wrapperProps = isMobile ? { asChild: true } : {};
+    
+    // @ts-ignore - a small concession for a clean implementation
+    return <Wrapper {...wrapperProps}>{children}</Wrapper>
 }
 
 
