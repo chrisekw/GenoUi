@@ -47,7 +47,7 @@ export default function SignupPage() {
         toast({ title: 'Account created!', description: 'Redirecting...' });
         // The FirebaseAuthProvider will handle the redirect.
     }
-  }, [state, toast, router]);
+  }, [state, toast]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
