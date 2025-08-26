@@ -12,41 +12,62 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { Logo } from "@/components/icons/logo"
-import { useFormStatus } from 'react-dom';
-import { signup } from '@/app/actions';
-import { useActionState, useEffect } from "react";
+import { useState, type FormEvent } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from 'next/navigation';
-
-const initialState = {
-  message: '',
-};
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button className="w-full" type="submit" disabled={pending}>
-      {pending ? 'Creating Account...' : 'Create an account'}
-    </Button>
-  );
-}
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function SignupPage() {
-  const [state, formAction] = useActionState(signup, initialState);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (state.message && state.message !== 'Success') {
+  const handleSignup = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
       toast({
         title: 'Signup Failed',
-        description: state.message,
+        description: 'Email and password are required.',
         variant: 'destructive',
       });
-    } else if (state.message === 'Success') {
-        toast({ title: 'Account created!', description: 'Redirecting...' });
-        // The FirebaseAuthProvider will now handle the redirect.
+      return;
     }
-  }, [state, toast]);
+    setIsLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      toast({
+        title: 'Account created!',
+        description: 'Redirecting...',
+      });
+      // The FirebaseAuthProvider will handle the redirect.
+    } catch (error: any) {
+      console.error('Firebase signup error:', error.code, error.message);
+      let errorMessage = 'An unexpected error occurred.';
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/email-already-in-use':
+          errorMessage = 'This email is already registered. Please login.';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'The password is too weak. It must be at least 6 characters long.';
+          break;
+        default:
+          errorMessage = 'An unknown error occurred. Please try again.';
+          break;
+      }
+      toast({
+        title: 'Signup Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
@@ -62,15 +83,15 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={formAction}>
+          <form onSubmit={handleSignup}>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="first-name">First name</Label>
-                <Input id="first-name" name="firstName" placeholder="Max" required />
+                <Input id="first-name" name="firstName" placeholder="Max" required disabled={isLoading} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="last-name">Last name</Label>
-                <Input id="last-name" name="lastName" placeholder="Robinson" required />
+                <Input id="last-name" name="lastName" placeholder="Robinson" required disabled={isLoading} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -80,13 +101,26 @@ export default function SignupPage() {
                   name="email"
                   placeholder="m@example.com"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" name="password" type="password" required />
+                <Input 
+                  id="password" 
+                  name="password" 
+                  type="password" 
+                  required 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                />
               </div>
-              <SubmitButton />
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                {isLoading ? 'Creating Account...' : 'Create an account'}
+              </Button>
             </div>
           </form>
           <div className="mt-4 text-center text-sm">

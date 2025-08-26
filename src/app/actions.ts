@@ -7,73 +7,10 @@ import { enhancePrompt, EnhancePromptOutput } from '@/ai/flows/enhance-prompt-fl
 import { animatePrompt, AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
 import type { GalleryItem } from '@/lib/gallery-items';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 
-async function firebaseAction<T>(action: (auth: any) => Promise<T>): Promise<{ data?: T, error?: string }> {
-  try {
-    const data = await action(auth);
-    return { data };
-  } catch (error: any) {
-    console.error('Firebase action error:', error.code, error.message);
-    let errorMessage = 'An unexpected error occurred.';
-    switch (error.code) {
-      case 'auth/invalid-email':
-        errorMessage = 'Please enter a valid email address.';
-        break;
-      case 'auth/user-not-found':
-      case 'auth/wrong-password':
-      case 'auth/invalid-credential':
-        errorMessage = 'Invalid email or password.';
-        break;
-      case 'auth/email-already-in-use':
-        errorMessage = 'This email is already registered. Please login.';
-        break;
-      case 'auth/weak-password':
-        errorMessage = 'The password is too weak. It must be at least 6 characters long.';
-        break;
-      default:
-        errorMessage = error.message || 'An unknown error occurred. Please try again.';
-        break;
-    }
-    return { error: errorMessage };
-  }
-}
-
-export async function login(prevState: { message: string }, formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  if (!email || !password) {
-      return { message: 'Email and password are required.' };
-  }
-  
-  const result = await firebaseAction(auth => signInWithEmailAndPassword(auth, email, password));
-
-  if (result.error) {
-    return { message: result.error };
-  }
-
-  return { message: 'Success' };
-}
-
-export async function signup(prevState: { message:string }, formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  if (!email || !password) {
-      return { message: 'Email and password are required.' };
-  }
-
-  const result = await firebaseAction(auth => createUserWithEmailAndPassword(auth, email, password));
-  
-  if (result.error) {
-    return { message: result.error };
-  }
-
-  return { message: 'Success' };
-}
-
+// NOTE: Login and Signup actions are now handled on the client-side
+// to ensure proper session persistence with Firebase Auth.
+// The functions are removed from here to avoid confusion.
 
 export async function handleGenerateComponent(
   input: GenerateUiComponentInput,

@@ -12,41 +12,60 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { Logo } from "@/components/icons/logo"
-import { useFormStatus } from 'react-dom';
-import { useActionState, useEffect } from "react";
-import { login } from '@/app/actions';
+import { useState, type FormEvent } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from 'next/navigation';
-
-const initialState = {
-  message: '',
-};
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button className="w-full" type="submit" disabled={pending}>
-      {pending ? 'Logging in...' : 'Login'}
-    </Button>
-  );
-}
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginPage() {
-  const [state, formAction] = useActionState(login, initialState);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (state.message && state.message !== 'Success') {
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
       toast({
         title: 'Login Failed',
-        description: state.message,
+        description: 'Email and password are required.',
         variant: 'destructive',
       });
-    } else if (state.message === 'Success') {
-        toast({ title: 'Login successful!', description: 'Redirecting...' });
-        // The FirebaseAuthProvider will now handle the redirect.
+      return;
     }
-  }, [state, toast]);
+    setIsLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast({
+        title: 'Login successful!',
+        description: 'Redirecting...',
+      });
+      // The FirebaseAuthProvider will handle the redirect.
+    } catch (error: any) {
+      console.error('Firebase login error:', error.code, error.message);
+      let errorMessage = 'An unexpected error occurred.';
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+          errorMessage = 'Invalid email or password.';
+          break;
+        default:
+          errorMessage = 'Invalid email or password.';
+          break;
+      }
+      toast({
+        title: 'Login Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
@@ -62,7 +81,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={formAction}>
+          <form onSubmit={handleLogin}>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -72,13 +91,26 @@ export default function LoginPage() {
                   name="email"
                   placeholder="m@example.com"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" name="password" type="password" required />
+                <Input 
+                  id="password" 
+                  name="password" 
+                  type="password" 
+                  required 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                />
               </div>
-              <SubmitButton />
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                {isLoading ? 'Logging in...' : 'Login'}
+              </Button>
             </div>
           </form>
           <div className="mt-4 text-center text-sm">
