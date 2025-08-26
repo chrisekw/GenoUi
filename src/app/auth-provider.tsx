@@ -6,6 +6,7 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { usePathname, useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Logo } from '@/components/icons/logo';
 
 type AuthContextType = {
   user: User | null;
@@ -52,10 +53,10 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
-          <Skeleton className="h-4 w-48" />
+      <div className="flex h-screen w-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4 animate-pulse">
+          <Logo className="h-12 w-12 text-primary" />
+          <p className="text-muted-foreground">Initializing Session...</p>
         </div>
       </div>
     );

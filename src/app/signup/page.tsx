@@ -34,7 +34,6 @@ function SubmitButton() {
 export default function SignupPage() {
   const [state, formAction] = useActionState(signup, initialState);
   const { toast } = useToast();
-  const router = useRouter();
 
   useEffect(() => {
     if (state.message && state.message !== 'Success') {
@@ -45,7 +44,7 @@ export default function SignupPage() {
       });
     } else if (state.message === 'Success') {
         toast({ title: 'Account created!', description: 'Redirecting...' });
-        // The FirebaseAuthProvider will handle the redirect.
+        // The FirebaseAuthProvider will now handle the redirect.
     }
   }, [state, toast]);
 
