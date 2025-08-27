@@ -2,9 +2,8 @@
 'use client';
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import { newsItems, type NewsItem } from '@/lib/news-items';
+import { notFound, useParams } from 'next/navigation';
+import { newsItems } from '@/lib/news-items';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft, Heart, MessageSquare } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,9 +12,11 @@ import { Separator } from '@/components/ui/separator';
 import { Logo } from '@/components/icons/logo';
 import { useToast } from '@/hooks/use-toast';
 
-export default function NewsArticlePage({ params }: { params: { slug: string } }) {
+export default function NewsArticlePage() {
+  const params = useParams();
+  const slug = params.slug as string;
   const { toast } = useToast();
-  const article = newsItems.find((item) => item.slug === params.slug);
+  const article = newsItems.find((item) => item.slug === slug);
   
   const [likes, setLikes] = useState(article?.likes || 0);
   const [hasLiked, setHasLiked] = useState(false);
@@ -144,5 +145,3 @@ export default function NewsArticlePage({ params }: { params: { slug: string } }
     </div>
   );
 }
-
-    
