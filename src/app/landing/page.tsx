@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { newsItems } from '@/lib/news-items';
 
 const features = [
   {
@@ -73,27 +74,6 @@ const faqs = [
   }
 ];
 
-const newsItems = [
-    {
-        title: "GenoUI Launches: Revolutionizing UI Development with AI",
-        date: "October 26, 2023",
-        description: "We're thrilled to announce the official launch of GenoUI! Generate production-ready components from text prompts and accelerate your design workflow.",
-        link: "#",
-    },
-    {
-        title: "New Feature: Image-to-Component Generation Now Live",
-        date: "November 15, 2023",
-        description: "You can now upload an image of a UI and have our AI replicate it. This powerful new feature streamlines the process of building from existing designs.",
-        link: "#",
-    },
-    {
-        title: "Community Gallery is Open: Share Your Creations",
-        date: "December 5, 2023",
-        description: "The community gallery is now live! Publish your favorite creations, explore what others have built, and get inspired by the growing collection of AI-generated UIs.",
-        link: "#",
-    }
-];
-
 export default function LandingPage() {
   return (
     <div className="bg-black text-white font-body antialiased">
@@ -105,7 +85,7 @@ export default function LandingPage() {
           </Link>
            <nav className="hidden sm:flex items-center gap-6 text-sm">
               <Link href="#features" className="text-neutral-300 hover:text-white transition-colors">Features</Link>
-              <Link href="#news" className="text-neutral-300 hover:text-white transition-colors">News</Link>
+              <Link href="/news" className="text-neutral-300 hover:text-white transition-colors">News</Link>
               <Link href="#faq" className="text-neutral-300 hover:text-white transition-colors">FAQ</Link>
           </nav>
           <div className="hidden sm:flex items-center gap-2">
@@ -135,7 +115,7 @@ export default function LandingPage() {
                         <Link href="#features" className="text-neutral-300 hover:text-white transition-colors">Features</Link>
                     </SheetClose>
                     <SheetClose asChild>
-                        <Link href="#news" className="text-neutral-300 hover:text-white transition-colors">News</Link>
+                        <Link href="/news" className="text-neutral-300 hover:text-white transition-colors">News</Link>
                     </SheetClose>
                     <SheetClose asChild>
                         <Link href="#faq" className="text-neutral-300 hover:text-white transition-colors">FAQ</Link>
@@ -282,11 +262,11 @@ export default function LandingPage() {
                     </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {newsItems.map((item, i) => (
-                    <Link href={item.link} key={i}>
+                  {newsItems.slice(0, 3).map((item, i) => (
+                    <Link href={`/news/${item.slug}`} key={i}>
                         <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 flex flex-col gap-4 h-full transition-all hover:border-primary/50 hover:-translate-y-1">
                             <h3 className="text-xl font-semibold text-white">{item.title}</h3>
-                            <p className="text-sm text-neutral-400">{item.date}</p>
+                            <p className="text-sm text-neutral-400">{new Date(item.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                             <p className="text-neutral-300 flex-grow">{item.description}</p>
                             <span className="text-primary font-semibold flex items-center gap-2">
                                 Read More <ArrowRight className="h-4 w-4"/>
@@ -294,6 +274,11 @@ export default function LandingPage() {
                         </div>
                     </Link>
                   ))}
+                </div>
+                 <div className="text-center mt-12">
+                    <Button asChild variant="outline" className="bg-transparent">
+                        <Link href="/news">View All News</Link>
+                    </Button>
                 </div>
             </div>
         </section>
@@ -359,3 +344,5 @@ export default function LandingPage() {
     </div>
   );
 }
+
+    
