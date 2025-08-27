@@ -110,7 +110,19 @@ export default function LandingPage() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="bg-black text-white w-full">
-                <nav className="flex flex-col gap-6 text-lg mt-12 text-center">
+                <div className="flex justify-between items-center p-4 border-b border-neutral-800">
+                    <Link href="/landing" className="flex items-center gap-2">
+                        <Logo className="w-7 h-7 text-white" />
+                        <span className="text-xl font-bold">GenoUI</span>
+                    </Link>
+                    <SheetClose asChild>
+                        <Button variant="ghost" size="icon">
+                            <Menu className="h-6 w-6" />
+                            <span className="sr-only">Close menu</span>
+                        </Button>
+                    </SheetClose>
+                </div>
+                <nav className="flex flex-col gap-6 text-lg mt-8 text-center">
                     <SheetClose asChild>
                         <Link href="#features" className="text-neutral-300 hover:text-white transition-colors">Features</Link>
                     </SheetClose>
@@ -121,7 +133,7 @@ export default function LandingPage() {
                         <Link href="#faq" className="text-neutral-300 hover:text-white transition-colors">FAQ</Link>
                     </SheetClose>
                 </nav>
-                <div className="mt-8 pt-6 border-t border-neutral-800 flex flex-col gap-4">
+                <div className="mt-8 pt-6 border-t border-neutral-800 flex flex-col gap-4 px-4">
                      <SheetClose asChild>
                         <Button asChild variant="outline" className="w-full bg-transparent">
                             <Link href="/login">Login</Link>
@@ -344,5 +356,7 @@ export default function LandingPage() {
     </div>
   );
 }
+
+    
 
     
