@@ -8,15 +8,29 @@ import {
     SheetContent,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
+import { Menu, PanelLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Sidebar } from './sidebar';
 import { Logo } from '../icons/logo';
 
-export function Header({ isUser }: { isUser: boolean}) {
+interface HeaderProps {
+  onToggleSidebar: () => void;
+}
 
+
+export function Header({ onToggleSidebar }: HeaderProps) {
     return (
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
+            <Button
+                variant="ghost"
+                size="icon"
+                className="hidden md:flex"
+                onClick={onToggleSidebar}
+            >
+                <PanelLeft className="h-5 w-5" />
+                <span className="sr-only">Toggle Sidebar</span>
+            </Button>
+            
             <div className="flex items-center gap-2 md:hidden">
                  <Link href="/app/dashboard" className="flex items-center gap-2 font-semibold">
                     <Logo className="h-6 w-6" />

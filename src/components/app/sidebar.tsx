@@ -13,7 +13,7 @@ import { useAuth } from '@/app/auth-provider';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 const navItems = [
     { href: '/app/dashboard', icon: LayoutGrid, label: 'Home', auth: true },
@@ -21,28 +21,51 @@ const navItems = [
     { href: '/pricing', icon: CreditCard, label: 'Pricing', auth: false },
 ];
 
-const NavLink = ({ item, isMobile }: { item: typeof navItems[0], isMobile: boolean }) => {
+const NavLink = ({ item, isMobile, isCollapsed }: { item: typeof navItems[0], isMobile: boolean, isCollapsed: boolean }) => {
     const pathname = usePathname();
     const isActive = pathname === item.href;
 
-    const linkComponent = (
-        <Link 
-            href={item.href} 
+    const linkContent = (
+        <span 
             className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                isActive && "bg-muted text-primary"
+                isActive && "bg-muted text-primary",
+                isCollapsed && "justify-center"
             )}
         >
-            <item.icon className="h-4 w-4" />
-            <span>{item.label}</span>
+            <item.icon className="h-5 w-5" />
+            <span className={cn("transition-opacity", isCollapsed && !isMobile ? "hidden" : "inline-block")}>{item.label}</span>
+        </span>
+    );
+
+    const linkWrapper = (
+        <Link href={item.href}>
+            {linkContent}
         </Link>
     );
 
     if (isMobile) {
-        return <SheetClose asChild>{linkComponent}</SheetClose>;
+        return <SheetClose asChild>{linkWrapper}</SheetClose>;
     }
-    return linkComponent;
+    
+    if (isCollapsed) {
+        return (
+            <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        {linkWrapper}
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                        {item.label}
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        )
+    }
+
+    return linkWrapper;
 };
+
 
 const UserProfileLink = ({ isMobile, children }: { isMobile: boolean, children: React.ReactNode }) => {
     const Wrapper = isMobile ? SheetClose : React.Fragment;
@@ -53,7 +76,7 @@ const UserProfileLink = ({ isMobile, children }: { isMobile: boolean, children: 
 }
 
 
-const SidebarContent = ({ isMobile = false }) => {
+const SidebarContent = ({ isMobile = false, isCollapsed = false }) => {
     const { user } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
@@ -69,32 +92,32 @@ const SidebarContent = ({ isMobile = false }) => {
     };
 
     return (
-     <div className="flex h-full max-h-screen flex-col gap-2">
+     <div className="flex h-full max-h-screen flex-col">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/app/dashboard" className="flex items-center gap-2 font-semibold">
                 <Logo className="h-6 w-6" />
-                <span className="">GenoUI</span>
+                <span className={cn(isCollapsed && !isMobile ? "hidden" : "inline")}>GenoUI</span>
             </Link>
         </div>
         <div className="flex-1 overflow-auto py-2">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                {navItems.filter(item => !item.auth || user).map(item => <NavLink key={item.href} item={item} isMobile={isMobile} />)}
+                {navItems.filter(item => !item.auth || user).map(item => <NavLink key={item.href} item={item} isMobile={isMobile} isCollapsed={isCollapsed} />)}
             </nav>
         </div>
-        <div className="mt-auto p-4">
+        <div className={cn("mt-auto p-4", isCollapsed && !isMobile && "px-2")}>
             {user ? (
                 <div className="grid gap-2">
                     <UserProfileLink isMobile={isMobile}>
                         <Link href="/app/profile">
                             <Button variant="ghost" className="w-full justify-start">
-                                <User className="mr-2 h-4 w-4" />
-                                Profile
+                                <User className="h-4 w-4" />
+                                <span className={cn("ml-2", isCollapsed && !isMobile ? "hidden" : "inline")}>Profile</span>
                             </Button>
                         </Link>
                      </UserProfileLink>
-                     <Button variant="secondary" onClick={handleSignOut}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sign Out
+                     <Button variant="secondary" onClick={handleSignOut} className="w-full justify-center">
+                        <LogOut className="h-4 w-4" />
+                         <span className={cn("ml-2", isCollapsed && !isMobile ? "hidden" : "inline")}>Sign Out</span>
                     </Button>
                  </div>
             ) : (
@@ -102,14 +125,15 @@ const SidebarContent = ({ isMobile = false }) => {
                     <UserProfileLink isMobile={isMobile}>
                         <Link href="/login">
                             <Button variant="outline" className="w-full">
-                               <LogIn className="mr-2 h-4 w-4"/> Login
+                               <LogIn className="mr-2 h-4 w-4"/>
+                                <span className={cn(isCollapsed && !isMobile ? "hidden" : "inline")}>Login</span>
                             </Button>
                         </Link>
                     </UserProfileLink>
                      <UserProfileLink isMobile={isMobile}>
                         <Link href="/signup">
                             <Button className="w-full">
-                               Sign Up
+                               <span className={cn(isCollapsed && !isMobile ? "hidden" : "inline")}>Sign Up</span>
                             </Button>
                         </Link>
                     </UserProfileLink>
@@ -121,14 +145,17 @@ const SidebarContent = ({ isMobile = false }) => {
 };
 
 
-export function Sidebar({ isMobile = false }: { isMobile?: boolean, isUser?: boolean }) {
+export function Sidebar({ isMobile = false, isCollapsed = false }: { isMobile?: boolean, isCollapsed?: boolean }) {
   if (isMobile) {
     return <SidebarContent isMobile={true} />;
   }
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background md:flex">
-        <SidebarContent />
+    <aside className={cn(
+        "fixed inset-y-0 left-0 z-10 hidden flex-col border-r bg-background md:flex transition-[width] duration-300 ease-in-out",
+        isCollapsed ? "w-20" : "w-64"
+    )}>
+        <SidebarContent isCollapsed={isCollapsed} />
     </aside>
   );
 }
