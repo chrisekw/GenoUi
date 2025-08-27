@@ -126,7 +126,7 @@ function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUr
     <>
       <div className="flex-1 overflow-y-auto">
         <main className="flex flex-col items-center justify-center p-4 md:p-6 my-12">
-            <div className="w-full max-w-2xl mx-auto flex flex-col gap-8">
+            <div className="w-full max-w-xl mx-auto flex flex-col gap-8">
                 <h1 className="text-4xl md:text-5xl font-bold text-center tracking-tight text-balance">
                 Build UI at the speed of thought
                 </h1>
@@ -143,7 +143,7 @@ function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUr
                         placeholder="A futuristic login form with glowing input fields and a sleek, dark theme..."
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        className="bg-background border-border/50 rounded-xl p-4 pr-24 h-36 text-base focus-visible:ring-1 focus-visible:ring-primary shadow-inner"
+                        className="bg-background border-border/50 rounded-xl p-4 pr-14 h-36 text-base focus-visible:ring-1 focus-visible:ring-primary shadow-sm"
                     />
                     <div className="absolute bottom-3 right-3 flex items-center gap-1">
                         <input
@@ -153,8 +153,8 @@ function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUr
                             className="hidden"
                             accept="image/*"
                         />
-                        <Button size="icon" onClick={() => onGenerate(prompt, 'html', imageUrl || undefined)} disabled={isLoading || isEnhancing} className="rounded-lg">
-                            <ArrowUp />
+                        <Button size="icon" onClick={() => onGenerate(prompt, 'html', imageUrl || undefined)} disabled={isLoading || isEnhancing} className="rounded-lg w-9 h-9 bg-black text-white hover:bg-gray-800">
+                            <ArrowUp className="h-5 w-5" />
                         </Button>
                     </div>
                 </div>
@@ -168,7 +168,7 @@ function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUr
                 </div>
             </div>
             </main>
-            <div className="px-4 md:px-8">
+            <div className="px-4 md:px-8 pb-8">
                 <CommunityGallery />
             </div>
         </div>

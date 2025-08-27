@@ -39,12 +39,9 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
 
     const isAuthPage = pathname === '/login' || pathname === '/signup';
     
-    // Check if the current page is a protected app page.
     const isAppPage = pathname.startsWith('/app');
-    const isLegalPage = pathname.startsWith('/legal');
-    const isLandingPage = pathname === '/landing';
     
-    if (!user && (isAppPage || isLegalPage) && !isLandingPage && !isAuthPage) {
+    if (!user && isAppPage) {
       router.push('/login');
     }
     

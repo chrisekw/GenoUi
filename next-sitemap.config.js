@@ -3,6 +3,6 @@ module.exports = {
   siteUrl: 'https://genoui.vercel.app',
   generateRobotsTxt: true, 
   sitemapSize: 7000,
-  // (optional)
-  // ...other options
+  // Exclude authed app pages from sitemap
+  exclude: ['/app', '/app/*'],
 };

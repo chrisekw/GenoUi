@@ -8,44 +8,30 @@ import {
     SheetContent,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import { Menu, PanelLeft } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { Sidebar } from './sidebar';
 import { Logo } from '../icons/logo';
 
-interface HeaderProps {
-  onToggleSidebar: () => void;
-}
-
-
-export function Header({ onToggleSidebar }: HeaderProps) {
+export function Header() {
     return (
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background px-4 sm:px-6">
+            <Link href="/app/dashboard" className="flex items-center gap-2 font-semibold">
+                <Logo className="h-6 w-6" />
+                <span className="">GenoUI</span>
+            </Link>
+            
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button size="icon" variant="outline" className="sm:hidden">
+                    <Button size="icon" variant="outline" className="">
                         <Menu className="h-5 w-5" />
                         <span className="sr-only">Toggle Menu</span>
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="sm:max-w-xs p-0 w-64">
+                <SheetContent side="right" className="p-0 w-64">
                    <Sidebar isMobile />
                 </SheetContent>
             </Sheet>
-            <Button
-                variant="ghost"
-                size="icon"
-                className="hidden md:flex"
-                onClick={onToggleSidebar}
-            >
-                <PanelLeft className="h-5 w-5" />
-                <span className="sr-only">Toggle Sidebar</span>
-            </Button>
-            
-            <div className="w-full flex-1">
-                {/* Can add search or other header elements here */}
-            </div>
-            
         </header>
     );
 }

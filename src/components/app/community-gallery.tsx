@@ -71,8 +71,8 @@ export function CommunityGallery() {
   }
 
   const renderSkeleton = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {Array.from({ length: 4 }).map((_, i) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {Array.from({ length: 2 }).map((_, i) => (
         <Card key={i}>
             <CardContent className="p-0 aspect-[4/3] bg-muted/40 rounded-t-lg">
                 <Skeleton className="w-full h-full" />
@@ -89,25 +89,25 @@ export function CommunityGallery() {
   );
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+    <div className="w-full max-w-5xl mx-auto">
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <CardTitle className="text-2xl font-semibold tracking-tight">From the Community</CardTitle>
+          <h2 className="text-2xl font-semibold tracking-tight">From the Community</h2>
           <p className="text-sm text-muted-foreground">Explore what the community is building.</p>
         </div>
-        <Button asChild variant="outline">
+        <Button asChild variant="ghost" size="sm">
             <Link href="/app/community">
                 Browse All <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
         </Button>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div>
       {loading ? renderSkeleton() : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {components.map((item) => (
              <Card 
                 key={item.id}
-                className="group relative flex flex-col overflow-hidden transition-all duration-300 bg-card border shadow-sm rounded-lg hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1"
+                className="group relative flex flex-col overflow-hidden transition-all duration-300 bg-card border shadow-sm rounded-lg hover:shadow-lg"
                 >
                 <CardContent className="p-0 aspect-[4/3] flex-grow bg-muted/20 rounded-t-lg overflow-hidden border-b">
                     <Link href={`/component/${item.id}`} className="block w-full h-full bg-background overflow-hidden">
@@ -152,7 +152,7 @@ export function CommunityGallery() {
           ))}
         </div>
       )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

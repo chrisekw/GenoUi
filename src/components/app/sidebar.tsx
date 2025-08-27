@@ -21,7 +21,7 @@ const navItems = [
     { href: '/app/pricing', icon: CreditCard, label: 'Pricing', auth: true },
 ];
 
-const NavLink = ({ item, isMobile, isCollapsed }: { item: typeof navItems[0], isMobile: boolean, isCollapsed: boolean }) => {
+const NavLink = ({ item, isMobile }: { item: typeof navItems[0], isMobile: boolean }) => {
     const pathname = usePathname();
     const isActive = pathname === item.href;
 
@@ -29,12 +29,11 @@ const NavLink = ({ item, isMobile, isCollapsed }: { item: typeof navItems[0], is
         <span 
             className={cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                isActive && "bg-muted text-primary",
-                isCollapsed && "justify-center"
+                isActive && "bg-muted text-primary"
             )}
         >
             <item.icon className="h-5 w-5" />
-            <span className={cn("transition-opacity", isCollapsed && !isMobile ? "hidden" : "inline-block")}>{item.label}</span>
+            <span>{item.label}</span>
         </span>
     );
 
@@ -46,21 +45,6 @@ const NavLink = ({ item, isMobile, isCollapsed }: { item: typeof navItems[0], is
 
     if (isMobile) {
         return <SheetClose asChild>{linkWrapper}</SheetClose>;
-    }
-    
-    if (isCollapsed) {
-        return (
-            <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        {linkWrapper}
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                        {item.label}
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-        )
     }
 
     return linkWrapper;
@@ -76,7 +60,7 @@ const UserProfileLink = ({ isMobile, children }: { isMobile: boolean, children: 
 }
 
 
-const SidebarContent = ({ isMobile = false, isCollapsed = false }) => {
+const SidebarContent = ({ isMobile = false }) => {
     const { user } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
@@ -93,31 +77,31 @@ const SidebarContent = ({ isMobile = false, isCollapsed = false }) => {
 
     return (
      <div className="flex h-full max-h-screen flex-col">
-        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+        <div className="flex h-16 items-center border-b px-4 lg:px-6">
             <Link href="/app/dashboard" className="flex items-center gap-2 font-semibold">
                 <Logo className="h-6 w-6" />
-                <span className={cn(isCollapsed && !isMobile ? "hidden" : "inline")}>GenoUI</span>
+                <span>GenoUI</span>
             </Link>
         </div>
         <div className="flex-1 overflow-auto py-2">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                {navItems.filter(item => !item.auth || user).map(item => <NavLink key={item.href} item={item} isMobile={isMobile} isCollapsed={isCollapsed} />)}
+                {navItems.filter(item => !item.auth || user).map(item => <NavLink key={item.href} item={item} isMobile={isMobile} />)}
             </nav>
         </div>
-        <div className={cn("mt-auto p-4", isCollapsed && !isMobile && "px-2")}>
+        <div className="mt-auto p-4">
             {user ? (
                 <div className="grid gap-2">
                     <UserProfileLink isMobile={isMobile}>
                         <Link href="/app/profile">
                             <Button variant="ghost" className="w-full justify-start">
-                                <User className="h-4 w-4" />
-                                <span className={cn("ml-2", isCollapsed && !isMobile ? "hidden" : "inline")}>Profile</span>
+                                <User className="h-4 w-4 mr-2" />
+                                <span>Profile</span>
                             </Button>
                         </Link>
                      </UserProfileLink>
-                     <Button variant="secondary" onClick={handleSignOut} className="w-full justify-center">
-                        <LogOut className="h-4 w-4" />
-                         <span className={cn("ml-2", isCollapsed && !isMobile ? "hidden" : "inline")}>Sign Out</span>
+                     <Button variant="secondary" onClick={handleSignOut} className="w-full justify-start">
+                        <LogOut className="h-4 w-4 mr-2" />
+                         <span>Sign Out</span>
                     </Button>
                  </div>
             ) : (
@@ -126,14 +110,14 @@ const SidebarContent = ({ isMobile = false, isCollapsed = false }) => {
                         <Link href="/login">
                             <Button variant="outline" className="w-full">
                                <LogIn className="mr-2 h-4 w-4"/>
-                                <span className={cn(isCollapsed && !isMobile ? "hidden" : "inline")}>Login</span>
+                                <span>Login</span>
                             </Button>
                         </Link>
                     </UserProfileLink>
                      <UserProfileLink isMobile={isMobile}>
                         <Link href="/signup">
                             <Button className="w-full">
-                               <span className={cn(isCollapsed && !isMobile ? "hidden" : "inline")}>Sign Up</span>
+                               <span>Sign Up</span>
                             </Button>
                         </Link>
                     </UserProfileLink>
@@ -145,17 +129,6 @@ const SidebarContent = ({ isMobile = false, isCollapsed = false }) => {
 };
 
 
-export function Sidebar({ isMobile = false, isCollapsed = false }: { isMobile?: boolean, isCollapsed?: boolean }) {
-  if (isMobile) {
-    return <SidebarContent isMobile={true} />;
-  }
-
-  return (
-    <aside className={cn(
-        "fixed inset-y-0 left-0 z-10 hidden flex-col border-r bg-background md:flex transition-[width] duration-300 ease-in-out",
-        isCollapsed ? "w-20" : "w-64"
-    )}>
-        <SidebarContent isCollapsed={isCollapsed} />
-    </aside>
-  );
+export function Sidebar({ isMobile = false }: { isMobile?: boolean }) {
+    return <SidebarContent isMobile={isMobile} />;
 }
