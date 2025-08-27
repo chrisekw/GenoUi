@@ -1,10 +1,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons/logo';
-import { ArrowRight, Bot, Code, Users, Star, PlayCircle, ChevronDown, Newspaper } from 'lucide-react';
+import { ArrowRight, Bot, Code, Users, Star, PlayCircle, Newspaper, Menu } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 
 const features = [
   {
@@ -107,7 +108,7 @@ export default function LandingPage() {
               <Link href="#news" className="text-neutral-300 hover:text-white transition-colors">News</Link>
               <Link href="#faq" className="text-neutral-300 hover:text-white transition-colors">FAQ</Link>
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-2">
             <Button asChild variant="ghost" className="hidden sm:flex">
               <Link href="/login">
                   Login
@@ -119,6 +120,41 @@ export default function LandingPage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
+          </div>
+          <div className="sm:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="bg-black text-white w-full">
+                <nav className="flex flex-col gap-6 text-lg mt-12 text-center">
+                    <SheetClose asChild>
+                        <Link href="#features" className="text-neutral-300 hover:text-white transition-colors">Features</Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                        <Link href="#news" className="text-neutral-300 hover:text-white transition-colors">News</Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                        <Link href="#faq" className="text-neutral-300 hover:text-white transition-colors">FAQ</Link>
+                    </SheetClose>
+                </nav>
+                <div className="mt-8 pt-6 border-t border-neutral-800 flex flex-col gap-4">
+                     <SheetClose asChild>
+                        <Button asChild variant="outline" className="w-full bg-transparent">
+                            <Link href="/login">Login</Link>
+                        </Button>
+                     </SheetClose>
+                     <SheetClose asChild>
+                        <Button asChild variant="secondary" className="w-full">
+                            <Link href="/signup">Sign Up <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                        </Button>
+                     </SheetClose>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
