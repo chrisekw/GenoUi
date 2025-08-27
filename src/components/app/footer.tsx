@@ -14,9 +14,15 @@ export function Footer() {
                 </Link>
                 <span className="hidden sm:inline-block">© {new Date().getFullYear()} All rights reserved.</span>
             </div>
+            
+            <div className="flex items-center gap-x-6 gap-y-2 text-sm text-muted-foreground flex-wrap justify-center">
+                 <Link href="/legal/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+                 <Link href="/legal/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+                 <Link href="/legal/refund" className="hover:text-primary transition-colors">Refund Policy</Link>
+            </div>
 
             <div className="flex items-center gap-4">
-                <a href="https://findly.tools/genoui?utm_source=genoui" target="_blank">
+                <a href="https://findly.tools/genoui?utm_source=genoui" target="_blank" rel="noopener noreferrer">
                   <img 
                     src="https://findly.tools/badges/findly-tools-badge-light.svg" 
                     alt="Featured on findly.tools" 

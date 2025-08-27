@@ -40,10 +40,11 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
     const isAuthPage = pathname === '/login' || pathname === '/signup';
     
     // Check if the current page is a protected app page.
-    // The pricing and community pages are now inside `/app` so they are protected too.
     const isAppPage = pathname.startsWith('/app');
+    const isLegalPage = pathname.startsWith('/legal');
+    const isLandingPage = pathname === '/landing';
     
-    if (!user && isAppPage) {
+    if (!user && (isAppPage || isLegalPage) && !isLandingPage && !isAuthPage) {
       router.push('/login');
     }
     
@@ -56,8 +57,9 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Logo className="h-12 w-12 text-primary animate-pulse" />
+        <div className="flex flex-col items-center gap-4 animate-pulse">
+          <Logo className="h-10 w-10 text-primary" />
+           <span className="text-xl font-bold text-primary">GenoUI</span>
         </div>
       </div>
     );
