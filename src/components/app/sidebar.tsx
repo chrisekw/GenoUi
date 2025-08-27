@@ -17,8 +17,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 
 const navItems = [
     { href: '/app/dashboard', icon: LayoutGrid, label: 'Home', auth: true },
-    { href: '/community', icon: Gift, label: 'Community', auth: false },
-    { href: '/pricing', icon: CreditCard, label: 'Pricing', auth: false },
+    { href: '/app/community', icon: Gift, label: 'Community', auth: false },
+    { href: '/app/pricing', icon: CreditCard, label: 'Pricing', auth: false },
 ];
 
 const NavLink = ({ item, isMobile, isCollapsed }: { item: typeof navItems[0], isMobile: boolean, isCollapsed: boolean }) => {

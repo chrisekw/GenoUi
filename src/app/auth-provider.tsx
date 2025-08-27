@@ -38,6 +38,9 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
     if (loading) return;
 
     const isAuthPage = pathname === '/login' || pathname === '/signup';
+    
+    // Check if the current page is a protected app page.
+    // The pricing and community pages are now inside `/app` so they are protected too.
     const isAppPage = pathname.startsWith('/app');
     
     if (!user && isAppPage) {
@@ -53,9 +56,8 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4 animate-pulse">
-          <Logo className="h-12 w-12 text-primary" />
-          <p className="text-muted-foreground">Initializing Session...</p>
+        <div className="flex flex-col items-center gap-4">
+          <Logo className="h-12 w-12 text-primary animate-pulse" />
         </div>
       </div>
     );
