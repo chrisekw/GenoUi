@@ -20,7 +20,18 @@ interface HeaderProps {
 
 export function Header({ onToggleSidebar }: HeaderProps) {
     return (
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button size="icon" variant="outline" className="sm:hidden">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle Menu</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="sm:max-w-xs p-0 w-64">
+                   <Sidebar isMobile />
+                </SheetContent>
+            </Sheet>
             <Button
                 variant="ghost"
                 size="icon"
@@ -31,32 +42,10 @@ export function Header({ onToggleSidebar }: HeaderProps) {
                 <span className="sr-only">Toggle Sidebar</span>
             </Button>
             
-            <div className="flex items-center gap-2 md:hidden">
-                 <Link href="/app/dashboard" className="flex items-center gap-2 font-semibold">
-                    <Logo className="h-6 w-6" />
-                    <span className="">GenoUI</span>
-                </Link>
-            </div>
-            
             <div className="w-full flex-1">
                 {/* Can add search or other header elements here */}
             </div>
             
-            <div className="flex items-center gap-2">
-                 <div className="md:hidden">
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <Button size="icon" variant="outline">
-                                <Menu className="h-5 w-5" />
-                                <span className="sr-only">Toggle Menu</span>
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="left" className="sm:max-w-xs p-0 w-64">
-                           <Sidebar isMobile />
-                        </SheetContent>
-                    </Sheet>
-                </div>
-            </div>
         </header>
     );
 }

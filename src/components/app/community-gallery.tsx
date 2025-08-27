@@ -8,12 +8,11 @@ import type { GalleryItem } from '@/lib/gallery-items';
 import { getCommunityComponents, handleCopyComponent, handleLikeComponent } from '@/app/actions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ComponentRenderer } from '@/components/app/component-renderer';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useTransition } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
 
 export function CommunityGallery() {
   const { toast } = useToast();
@@ -74,11 +73,11 @@ export function CommunityGallery() {
   const renderSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Card key={i} className="bg-transparent border-none shadow-none">
-            <CardContent className="p-0 aspect-[4/3] bg-muted/40 rounded-lg">
+        <Card key={i}>
+            <CardContent className="p-0 aspect-[4/3] bg-muted/40 rounded-t-lg">
                 <Skeleton className="w-full h-full" />
             </CardContent>
-            <CardFooter className="p-0 pt-4">
+            <CardFooter className="p-4">
                 <div className="w-full">
                     <Skeleton className="h-5 w-3/4 mb-2" />
                     <Skeleton className="h-4 w-1/2" />
@@ -90,22 +89,25 @@ export function CommunityGallery() {
   );
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-12">
-      <div className="flex justify-between items-center mb-6">
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">From the Community</h2>
-          <p className="text-muted-foreground">Explore what the community is building.</p>
+          <CardTitle className="text-2xl font-semibold tracking-tight">From the Community</CardTitle>
+          <p className="text-sm text-muted-foreground">Explore what the community is building.</p>
         </div>
-        <Link href="/community" className="flex items-center text-sm font-medium text-primary hover:underline">
-          Browse All <ArrowRight className="ml-1 h-4 w-4" />
-        </Link>
-      </div>
+        <Button asChild variant="outline">
+            <Link href="/app/community">
+                Browse All <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+        </Button>
+      </CardHeader>
+      <CardContent>
       {loading ? renderSkeleton() : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {components.map((item) => (
              <Card 
                 key={item.id}
-                className="group relative flex flex-col overflow-hidden transition-all duration-300 bg-secondary border-none shadow-none rounded-lg hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1"
+                className="group relative flex flex-col overflow-hidden transition-all duration-300 bg-card border shadow-sm rounded-lg hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1"
                 >
                 <CardContent className="p-0 aspect-[4/3] flex-grow bg-muted/20 rounded-t-lg overflow-hidden border-b">
                     <Link href={`/component/${item.id}`} className="block w-full h-full bg-background overflow-hidden">
@@ -150,6 +152,7 @@ export function CommunityGallery() {
           ))}
         </div>
       )}
-    </div>
+      </CardContent>
+    </Card>
   );
 }

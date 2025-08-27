@@ -7,9 +7,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function DashboardPage() {
   // This is the new home for the main component generator UI for logged-in users.
   return (
-    <React.Suspense fallback={<PageSkeleton />}>
-      <PageContent />
-    </React.Suspense>
+    <div className="h-full w-full">
+        <React.Suspense fallback={<PageSkeleton />}>
+            <PageContent />
+        </React.Suspense>
+    </div>
   );
 }
 

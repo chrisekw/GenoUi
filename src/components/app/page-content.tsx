@@ -22,7 +22,6 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CommunityGallery } from './community-gallery';
-import { Footer } from './footer';
 import { AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
 import { EnhancePromptOutput } from '@/ai/flows/enhance-prompt-flow';
 
@@ -169,9 +168,10 @@ function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUr
                 </div>
             </div>
             </main>
-            <CommunityGallery />
+            <div className="px-4 md:px-8">
+                <CommunityGallery />
+            </div>
         </div>
-        <Footer />
         <Dialog open={showCloneDialog} onOpenChange={setShowCloneDialog}>
             <DialogContent>
             <DialogHeader>
@@ -325,33 +325,32 @@ export function PageContent() {
     router.replace('/app/dashboard');
   }
 
+  if (activeView === 'prompt') {
+    return (
+        <PromptView 
+            prompt={prompt}
+            setPrompt={setPrompt}
+            onGenerate={onGenerate}
+            onClone={onClone}
+            isLoading={isLoading}
+            imageUrl={imageUrl}
+            setImageUrl={setImageUrl}
+        />
+    )
+  }
+
   return (
-    <div className="flex-1 flex flex-col bg-background">
-        {activeView === 'prompt' && (
-            <PromptView 
-                prompt={prompt}
-                setPrompt={setPrompt}
-                onGenerate={onGenerate}
-                onClone={onClone}
-                isLoading={isLoading}
-                imageUrl={imageUrl}
-                setImageUrl={setImageUrl}
-            />
-        )}
-        {activeView === 'preview' && (
-        <div className="h-[calc(100vh-80px)]">
-            <ComponentPreview
-                code={generatedCode}
-                previewHtml={previewHtml}
-                suggestions={layoutSuggestions}
-                isLoading={isLoading}
-                framework={framework}
-                prompt={prompt}
-                onBack={handleBackToPrompt}
-                onFrameworkChange={handleFrameworkChange}
-            />
-        </div>
-        )}
+    <div className="h-full">
+        <ComponentPreview
+            code={generatedCode}
+            previewHtml={previewHtml}
+            suggestions={layoutSuggestions}
+            isLoading={isLoading}
+            framework={framework}
+            prompt={prompt}
+            onBack={handleBackToPrompt}
+            onFrameworkChange={handleFrameworkChange}
+        />
     </div>
   );
 }
