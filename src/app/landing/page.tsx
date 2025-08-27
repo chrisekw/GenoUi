@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons/logo';
-import { ArrowRight, Bot, Code, Users, Star, PlayCircle, ChevronDown } from 'lucide-react';
+import { ArrowRight, Bot, Code, Users, Star, PlayCircle, ChevronDown, Newspaper } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -34,19 +34,22 @@ const testimonials = [
     quote: "GenoUI has completely transformed our workflow. We're building and shipping UIs 10x faster. It feels like magic.",
     name: 'Sarah L.',
     title: 'Lead Designer at Innovate Co.',
-    avatar: 'https://placehold.co/48x48.png',
+    avatar: 'https://picsum.photos/48/48',
+    avatarHint: 'person portrait'
   },
   {
     quote: "As a backend developer, frontend was always a bottleneck. GenoUI lets me create stunning, production-ready interfaces without writing a single line of CSS. A total game-changer.",
     name: 'Mike R.',
     title: 'Full-Stack Developer',
-    avatar: 'https://placehold.co/48x48.png',
+    avatar: 'https://picsum.photos/48/48',
+    avatarHint: 'person portrait'
   },
   {
     quote: "The quality of the generated code is incredible. It's clean, responsive, and follows best practices. I can trust it for client projects.",
     name: 'Emily K.',
     title: 'Freelance Web Developer',
-    avatar: 'https://placehold.co/48x48.png',
+    avatar: 'https://picsum.photos/48/48',
+    avatarHint: 'person portrait'
   }
 ];
 
@@ -69,6 +72,27 @@ const faqs = [
   }
 ];
 
+const newsItems = [
+    {
+        title: "GenoUI Launches: Revolutionizing UI Development with AI",
+        date: "October 26, 2023",
+        description: "We're thrilled to announce the official launch of GenoUI! Generate production-ready components from text prompts and accelerate your design workflow.",
+        link: "#",
+    },
+    {
+        title: "New Feature: Image-to-Component Generation Now Live",
+        date: "November 15, 2023",
+        description: "You can now upload an image of a UI and have our AI replicate it. This powerful new feature streamlines the process of building from existing designs.",
+        link: "#",
+    },
+    {
+        title: "Community Gallery is Open: Share Your Creations",
+        date: "December 5, 2023",
+        description: "The community gallery is now live! Publish your favorite creations, explore what others have built, and get inspired by the growing collection of AI-generated UIs.",
+        link: "#",
+    }
+];
+
 export default function LandingPage() {
   return (
     <div className="bg-black text-white font-body antialiased">
@@ -78,6 +102,11 @@ export default function LandingPage() {
             <Logo className="w-7 h-7 text-white" />
             <span className="text-xl font-bold">GenoUI</span>
           </Link>
+           <nav className="hidden sm:flex items-center gap-6 text-sm">
+              <Link href="#features" className="text-neutral-300 hover:text-white transition-colors">Features</Link>
+              <Link href="#news" className="text-neutral-300 hover:text-white transition-colors">News</Link>
+              <Link href="#faq" className="text-neutral-300 hover:text-white transition-colors">FAQ</Link>
+          </nav>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" className="hidden sm:flex">
               <Link href="/login">
@@ -155,8 +184,16 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 sm:py-32">
+        <section id="features" className="py-20 sm:py-32">
           <div className="container mx-auto px-6">
+            <div className="text-center mb-12">
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-balance">
+                    A New Paradigm in UI Development
+                </h2>
+                <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-neutral-300 text-balance">
+                    GenoUI isn't just a tool; it's your creative partner.
+                </p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {features.map((feature) => (
                 <div key={feature.title} className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 flex flex-col items-start gap-4 transition-all hover:border-primary/50 hover:shadow-primary/20 hover:shadow-lg">
@@ -185,7 +222,7 @@ export default function LandingPage() {
                         <div key={i} className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 flex flex-col gap-4">
                             <p className="text-neutral-300 flex-grow">"{testimonial.quote}"</p>
                             <div className="flex items-center gap-4 mt-4">
-                                <Image src={testimonial.avatar} data-ai-hint="person portrait" width={48} height={48} alt={`Avatar of ${testimonial.name}`} className="rounded-full" />
+                                <Image src={testimonial.avatar} data-ai-hint={testimonial.avatarHint} width={48} height={48} alt={`Avatar of ${testimonial.name}`} className="rounded-full" />
                                 <div>
                                     <p className="font-semibold text-white">{testimonial.name}</p>
                                     <p className="text-sm text-neutral-400">{testimonial.title}</p>
@@ -196,10 +233,37 @@ export default function LandingPage() {
                 </div>
             </div>
         </section>
-
+        
+        {/* News Section */}
+        <section id="news" className="py-20 sm:py-32">
+            <div className="container mx-auto px-6 max-w-6xl">
+                 <div className="text-center mb-12">
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-balance">
+                        News & Updates
+                    </h2>
+                     <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-neutral-300 text-balance">
+                        Stay up to date with the latest features, announcements, and product news from GenoUI.
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {newsItems.map((item, i) => (
+                    <Link href={item.link} key={i}>
+                        <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-6 flex flex-col gap-4 h-full transition-all hover:border-primary/50 hover:-translate-y-1">
+                            <h3 className="text-xl font-semibold text-white">{item.title}</h3>
+                            <p className="text-sm text-neutral-400">{item.date}</p>
+                            <p className="text-neutral-300 flex-grow">{item.description}</p>
+                            <span className="text-primary font-semibold flex items-center gap-2">
+                                Read More <ArrowRight className="h-4 w-4"/>
+                            </span>
+                        </div>
+                    </Link>
+                  ))}
+                </div>
+            </div>
+        </section>
 
         {/* FAQ Section */}
-        <section className="py-20 sm:py-32">
+        <section id="faq" className="py-20 sm:py-32">
             <div className="container mx-auto px-6 max-w-4xl">
                  <div className="text-center mb-12">
                     <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-balance">
