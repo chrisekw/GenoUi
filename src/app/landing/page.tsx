@@ -343,20 +343,23 @@ export default function LandingPage() {
       </main>
 
       <footer className="border-t border-neutral-900">
-        <div className="container mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-                <Logo className="w-5 h-5 text-neutral-400" />
-                <span className="text-neutral-400">GenoUI</span>
+        <div className="container mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                 <Link href="/landing" className="flex items-center gap-2">
+                    <Logo className="w-5 h-5 text-neutral-400" />
+                    <span className="text-neutral-400">GenoUI</span>
+                </Link>
+                <p className="text-sm text-neutral-500">
+                    © {new Date().getFullYear()} GenoUi. All rights reserved.
+                </p>
             </div>
-            <p className="text-sm text-neutral-500">
-                © {new Date().getFullYear()} GenoUi. All rights reserved.
-            </p>
+            <div className="flex items-center gap-4 text-sm text-neutral-400">
+                 <Link href="/legal/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                 <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                 <Link href="/legal/refund" className="hover:text-white transition-colors">Refund Policy</Link>
+            </div>
         </div>
       </footer>
     </div>
   );
 }
-
-    
-
-    
