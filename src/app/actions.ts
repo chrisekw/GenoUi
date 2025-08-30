@@ -6,6 +6,7 @@ import { cloneUrl, CloneUrlInput } from '@/ai/flows/clone-url-flow';
 import { enhancePrompt, EnhancePromptOutput } from '@/ai/flows/enhance-prompt-flow';
 import { animatePrompt, AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
+import { generatePromptFromImage } from '@/ai/flows/generate-prompt-from-image-flow';
 import type { GalleryItem } from '@/lib/gallery-items';
 
 // NOTE: Login and Signup actions are now handled on the client-side
@@ -25,7 +26,14 @@ export async function handleGenerateComponent(
     ]);
     
     // After generating the component, replace image placeholders
-    const { html: finalizedHtml } = await replaceImagePlaceholders({ html: componentResult.code });
+    let finalizedHtml = componentResult.code;
+    try {
+        const imageResult = await replaceImagePlaceholders({ html: componentResult.code });
+        finalizedHtml = imageResult.html;
+    } catch (e) {
+        console.error("Image placeholder replacement failed, falling back to original code.", e);
+    }
+
 
     return { 
         code: componentResult.code, 
@@ -38,6 +46,17 @@ export async function handleGenerateComponent(
     throw new Error(`Failed to generate component due to a server error: ${error.message}`);
   }
 }
+
+export async function handleImageUpload(input: { imageUrl: string }): Promise<{ prompt: string }> {
+    try {
+        const result = await generatePromptFromImage(input);
+        return result;
+    } catch (error: any) {
+        console.error('Error in image upload flow:', error);
+        throw new Error('Failed to generate prompt from image.');
+    }
+}
+
 
 export async function handleEnhancePrompt(prompt: string): Promise<EnhancePromptOutput> {
     try {
