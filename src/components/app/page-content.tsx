@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { handleGenerateComponent, handleCloneUrl, handleEnhancePrompt, handleAnimatePrompt } from '@/app/actions';
+import { handleGenerateComponent, handleCloneUrl, handleEnhancePrompt, handleAnimatePrompt, handleImageUpload } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import {
   ArrowUp,
@@ -43,16 +43,14 @@ interface PromptViewProps {
   prompt: string;
   setPrompt: (prompt: string) => void;
   onGenerate: (prompt: string, framework: Framework, imageUrl?: string) => void;
-  onClone: (url: string, framework: Framework) => void;
   isLoading: boolean;
   imageUrl: string | null;
   setImageUrl: (url: string | null) => void;
 }
 
-function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUrl, setImageUrl }: PromptViewProps) {
+function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setImageUrl }: PromptViewProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [showCloneDialog, setShowCloneDialog] = React.useState(false);
-  const [cloneUrl, setCloneUrlValue] = React.useState('');
   const [isEnhancing, setIsEnhancing] = React.useState(false);
   const { toast } = useToast();
   
@@ -88,7 +86,7 @@ function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUr
     { icon: CodeXml, text: 'Random Prompt', action: () => setPrompt(samplePrompts[Math.floor(Math.random() * samplePrompts.length)])},
     { icon: Clapperboard, text: 'Animate Prompt', action: () => enhancePromptAction(handleAnimatePrompt, 'Prompt animated!')},
     { icon: Sparkles, text: 'Enhance Prompt', action: () => enhancePromptAction(handleEnhancePrompt, 'Prompt enhanced!')},
-    { icon: LinkIcon, text: 'Clone URL', action: () => setShowCloneDialog(true) },
+    { icon: LinkIcon, text: 'Clone URL', action: () => toast({ title: 'Coming Soon!', description: 'This feature is under development.'}) },
   ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,11 +113,6 @@ function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUr
     if(fileInputRef.current) {
         fileInputRef.current.value = '';
     }
-  }
-  
-  const handleClone = () => {
-    onClone(cloneUrl, 'html');
-    setShowCloneDialog(false);
   }
 
   return (
@@ -172,36 +165,6 @@ function PromptView({ prompt, setPrompt, onGenerate, onClone, isLoading, imageUr
                 <CommunityGallery />
             </div>
         </div>
-        <Dialog open={showCloneDialog} onOpenChange={setShowCloneDialog}>
-            <DialogContent>
-            <DialogHeader>
-                <DialogTitle>Clone from URL</DialogTitle>
-                <DialogDescription>
-                    Enter a URL to clone a component from an existing website. This feature is experimental.
-                </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                    URL
-                </Label>
-                <Input
-                    id="url"
-                    value={cloneUrl}
-                    onChange={(e) => setCloneUrlValue(e.target.value)}
-                    className="col-span-3"
-                    placeholder="https://example.com"
-                />
-                </div>
-            </div>
-            <DialogFooter>
-                <Button variant="ghost" onClick={() => setShowCloneDialog(false)}>Cancel</Button>
-                <Button onClick={handleClone} disabled={isLoading}>
-                {isLoading ? 'Cloning...' : 'Clone'}
-                </Button>
-            </DialogFooter>
-            </DialogContent>
-        </Dialog>
     </>
   );
 }
@@ -248,15 +211,25 @@ export function PageContent() {
     }
     
     try {
-      const result = await handleGenerateComponent({ prompt: currentPrompt, framework: currentFramework, imageUrl: currentImageUrl });
-      setGeneratedCode(result.code);
-      setPreviewHtml(result.previewHtml || result.code);
-      setLayoutSuggestions(result.suggestions);
-      setFramework(currentFramework);
-      setPrompt(currentPrompt);
-      if (currentImageUrl) {
-        setImageUrl(currentImageUrl);
-      }
+        let finalPrompt = currentPrompt;
+        let result;
+
+        if (currentImageUrl) {
+             const promptResult = await handleImageUpload({ imageUrl: currentImageUrl });
+             finalPrompt = promptResult.prompt;
+             setPrompt(finalPrompt); // Update UI to show the new prompt
+        }
+
+        result = await handleGenerateComponent({ prompt: finalPrompt, framework: currentFramework });
+        
+        setGeneratedCode(result.code);
+        setPreviewHtml(result.previewHtml || result.code);
+        setLayoutSuggestions(result.suggestions);
+        setFramework(currentFramework);
+        if (currentImageUrl) {
+            setImageUrl(currentImageUrl);
+        }
+
     } catch (error: any) {
       console.error(error);
       toast({
@@ -268,44 +241,6 @@ export function PageContent() {
       setActiveView('prompt'); // Go back to prompt view on error
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const onClone = async (url: string, currentFramework: Framework) => {
-    if (!url) {
-      toast({
-        title: 'URL is empty',
-        description: 'Please enter a URL to clone a component.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    setIsLoading(true);
-    setGeneratedCode('');
-    setLayoutSuggestions('');
-    if (activeView !== 'preview') {
-      setActiveView('preview');
-    }
-
-    try {
-      const result = await handleCloneUrl({ url, framework: currentFramework });
-      setGeneratedCode(result.code);
-      setPreviewHtml(result.code);
-      setLayoutSuggestions(''); // No suggestions for cloned components for now
-      setFramework(currentFramework);
-      setPrompt(`A component cloned from ${url}`);
-      setImageUrl(null);
-    } catch (error: any) {
-        console.error(error);
-        toast({
-            title: 'Error cloning URL',
-            description: error.message || 'There was an error cloning the URL. Please try again.',
-            variant: 'destructive',
-        });
-        setGeneratedCode('');
-        setActiveView('prompt');
-    } finally {
-        setIsLoading(false);
     }
   };
   
@@ -331,7 +266,6 @@ export function PageContent() {
             prompt={prompt}
             setPrompt={setPrompt}
             onGenerate={onGenerate}
-            onClone={onClone}
             isLoading={isLoading}
             imageUrl={imageUrl}
             setImageUrl={setImageUrl}
@@ -340,7 +274,7 @@ export function PageContent() {
   }
 
   return (
-    <div className="h-full">
+    <div className="flex-1 flex flex-col">
         <ComponentPreview
             code={generatedCode}
             previewHtml={previewHtml}
