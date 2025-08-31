@@ -274,7 +274,7 @@ export function PageContent() {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col h-full">
         <ComponentPreview
             code={generatedCode}
             previewHtml={previewHtml}

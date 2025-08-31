@@ -191,7 +191,7 @@ export function ComponentPreview({
                     )}
                 </div>
                 </div>
-                <TabsContent value="preview" className="flex-1 bg-muted/20 relative p-4 md:p-8">
+                <TabsContent value="preview" className="flex-1 bg-muted/20 relative p-0 md:p-0 flex flex-col">
                     {isLoading && (
                         <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-10">
                             <div className="flex flex-col items-center gap-4">
@@ -207,7 +207,7 @@ export function ComponentPreview({
                             if (value) setViewport(value);
                         }}
                         aria-label="Viewport size"
-                        className="absolute top-6 left-1/2 -translate-x-1/2 z-10 bg-background rounded-lg p-1 shadow-md"
+                        className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-background rounded-lg p-1 shadow-md"
                     >
                         <ToggleGroupItem value="mobile" aria-label="Mobile viewport">
                             <Smartphone className="h-4 w-4" />
@@ -223,8 +223,8 @@ export function ComponentPreview({
                     <div 
                         ref={previewRef}
                         className={cn(
-                            "relative transition-all duration-300 ease-in-out w-full h-full mx-auto",
-                            "bg-background shadow-lg rounded-lg border flex items-center justify-center overflow-hidden"
+                            "relative transition-all duration-300 ease-in-out w-full flex-1 mx-auto",
+                            "flex items-center justify-center overflow-hidden"
                         )}
                         style={{ maxWidth: viewportSizes[viewport] }}
                     >
