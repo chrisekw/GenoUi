@@ -139,11 +139,14 @@ export function ComponentPreview({
   const renderContent = () => {
     if (isLoading && !code) {
       return (
-         <div className="flex items-center justify-center h-full">
-            <div className="flex flex-col items-center gap-4">
-                <Wand2 className="h-12 w-12 animate-pulse text-primary" />
-                <p className="text-muted-foreground">Generating component...</p>
+        <div className="flex flex-col items-center justify-center h-full w-full bg-grid-small-black/[0.2] dark:bg-grid-small-white/[0.2]">
+            <div className="relative flex items-center justify-center">
+                <div className="absolute h-48 w-48 rounded-full border-t-4 border-b-4 border-primary animate-spin-slow"></div>
+                <div className="absolute h-36 w-36 rounded-full border-t-4 border-b-4 border-accent animate-spin-medium"></div>
+                <div className="absolute h-24 w-24 rounded-full border-t-4 border-b-4 border-secondary animate-spin-fast"></div>
+                <Wand2 className="h-10 w-10 text-primary" />
             </div>
+            <p className="text-muted-foreground mt-8 text-lg">Generating component...</p>
          </div>
       );
     }
@@ -193,11 +196,14 @@ export function ComponentPreview({
                 </div>
                 <TabsContent value="preview" className="flex-1 bg-muted/20 relative p-0 md:p-0 flex flex-col">
                     {isLoading && (
-                        <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-10">
-                            <div className="flex flex-col items-center gap-4">
-                                <Wand2 className="h-12 w-12 animate-pulse text-primary" />
-                                <p className="text-muted-foreground">Regenerating component...</p>
+                        <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center z-10 bg-grid-small-black/[0.2] dark:bg-grid-small-white/[0.2]">
+                           <div className="relative flex items-center justify-center">
+                                <div className="absolute h-48 w-48 rounded-full border-t-4 border-b-4 border-primary animate-spin-slow"></div>
+                                <div className="absolute h-36 w-36 rounded-full border-t-4 border-b-4 border-accent animate-spin-medium"></div>
+                                <div className="absolute h-24 w-24 rounded-full border-t-4 border-b-4 border-secondary animate-spin-fast"></div>
+                                <Wand2 className="h-10 w-10 text-primary" />
                             </div>
+                            <p className="text-muted-foreground mt-8 text-lg">Regenerating component...</p>
                         </div>
                     )}
                      <ToggleGroup

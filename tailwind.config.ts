@@ -106,9 +106,21 @@ export default {
             from: { opacity: '1' },
             to: { opacity: '0' },
         },
-        pulse: {
+        'pulse': {
             '0%, 100%': { opacity: '1' },
             '50%': { opacity: '0.7' },
+        },
+        'spin-slow': {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
+        'spin-medium': {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(-360deg)' },
+        },
+        'spin-fast': {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
         },
       },
       animation: {
@@ -118,6 +130,9 @@ export default {
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
         'fade-out': 'fade-out 0.5s ease-out',
         'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'spin-slow': 'spin-slow 5s linear infinite',
+        'spin-medium': 'spin-medium 3s linear infinite',
+        'spin-fast': 'spin-fast 1s linear infinite',
       },
     },
   },
