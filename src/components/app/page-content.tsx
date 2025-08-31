@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { handleGenerateComponent, handleCloneUrl, handleEnhancePrompt, handleAnimatePrompt, handleImageUpload } from '@/app/actions';
+import { handleGenerateComponent, handleEnhancePrompt, handleAnimatePrompt, handleImageUpload } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import {
   ArrowUp,
@@ -17,9 +17,6 @@ import {
 import Image from 'next/image';
 import { Textarea } from '../ui/textarea';
 import { ComponentPreview } from './component-preview';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '../ui/dialog';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CommunityGallery } from './community-gallery';
 import { AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
@@ -50,7 +47,6 @@ interface PromptViewProps {
 
 function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setImageUrl }: PromptViewProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [showCloneDialog, setShowCloneDialog] = React.useState(false);
   const [isEnhancing, setIsEnhancing] = React.useState(false);
   const { toast } = useToast();
   
