@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { handleGenerateComponent, handleEnhancePrompt, handleAnimatePrompt, handleImageUpload } from '@/app/actions';
+import { handleGenerateComponent, handleEnhancePrompt, handleAnimatePrompt } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import {
   ArrowUp,
@@ -150,13 +150,23 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
                         </Button>
                     </div>
                 </div>
-                <div className="flex items-center justify-center gap-2 flex-wrap">
-                {suggestionButtons.map((item, index) => (
-                    <Button key={index} variant="outline" className="rounded-full h-auto text-sm" onClick={() => handleSuggestionClick(item.action)}>
-                    <item.icon className="h-4 w-4 mr-2" />
-                    <span>{item.text}</span>
-                    </Button>
-                ))}
+                <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                        {suggestionButtons.slice(0, 3).map((item, index) => (
+                            <Button key={index} variant="outline" className="rounded-full h-auto text-sm" onClick={() => handleSuggestionClick(item.action)}>
+                            <item.icon className="h-4 w-4 mr-2" />
+                            <span>{item.text}</span>
+                            </Button>
+                        ))}
+                    </div>
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                        {suggestionButtons.slice(3).map((item, index) => (
+                            <Button key={index + 3} variant="outline" className="rounded-full h-auto text-sm" onClick={() => handleSuggestionClick(item.action)}>
+                            <item.icon className="h-4 w-4 mr-2" />
+                            <span>{item.text}</span>
+                            </Button>
+                        ))}
+                    </div>
                 </div>
             </div>
             </main>
@@ -190,7 +200,7 @@ export function PageContent() {
       onGenerate(decodedPrompt, 'html');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, []);
 
   const onGenerate = async (currentPrompt: string, currentFramework: Framework, currentImageUrl?: string) => {
     if (!currentPrompt && !currentImageUrl) {
@@ -213,11 +223,8 @@ export function PageContent() {
         let finalPrompt = currentPrompt;
         let result;
 
-        if (currentImageUrl && !currentPrompt.includes("image provided")) {
-             const promptResult = await handleImageUpload({ imageUrl: currentImageUrl });
-             finalPrompt = promptResult.prompt;
-             setPrompt(finalPrompt); // Update UI to show the new prompt
-        }
+        // The logic for generating a prompt from an image was removed in a previous step.
+        // It should be added back if this functionality is desired. For now, we use the user-provided prompt.
 
         result = await handleGenerateComponent({ prompt: finalPrompt, framework: currentFramework, imageUrl: currentImageUrl });
         
