@@ -66,13 +66,14 @@ export default function CommunityFeedPage() {
     navigator.clipboard.writeText(code);
     toast({ title: 'Code copied to clipboard!' });
     
-    startTransition(() => {
+    startTransition(async () => {
+        await handleCopyComponent(componentId);
+        // We only need to update the state if we want to show the copy count, which we do.
         setComponents(prev => prev.map(c => 
             c.id === componentId 
             ? {...c, copies: (c.copies || 0) + 1} 
             : c
         ));
-        handleCopyComponent(componentId);
     });
   }
 
@@ -96,7 +97,7 @@ export default function CommunityFeedPage() {
 
 
   return (
-    <Card>
+    <Card className="flex-1 border-none shadow-none bg-transparent">
         <CardHeader>
             <CardTitle>Community Gallery</CardTitle>
         </CardHeader>
@@ -111,7 +112,7 @@ export default function CommunityFeedPage() {
                 components.map((item, index) => (
                 <Card 
                 key={item.id}
-                className="group relative flex flex-col overflow-hidden transition-all duration-300 animate-fade-in-up bg-secondary border-none shadow-none rounded-lg hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1"
+                className="group relative flex flex-col overflow-hidden transition-all duration-300 animate-fade-in-up bg-card border shadow-sm rounded-lg hover:shadow-lg"
                 style={{ animationDelay: `${index * 100}ms`}}
                 >
                     <CardContent className="p-0 aspect-[4/3] flex-grow bg-muted/20 rounded-t-lg overflow-hidden border-b">

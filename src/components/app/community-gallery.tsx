@@ -23,7 +23,8 @@ export function CommunityGallery() {
   React.useEffect(() => {
     async function fetchComponents() {
       try {
-        const comps = await getCommunityComponents(4);
+        // Fetch only 4 components for the dashboard preview
+        const comps = await getCommunityComponents(4); 
         setComponents(comps);
       } catch (error) {
         console.error("Error fetching community components:", error);
@@ -60,20 +61,20 @@ export function CommunityGallery() {
     navigator.clipboard.writeText(code);
     toast({ title: 'Code copied to clipboard!' });
     
-    startTransition(() => {
+    startTransition(async () => {
+        await handleCopyComponent(componentId);
         setComponents(prev => prev.map(c => 
             c.id === componentId 
             ? {...c, copies: (c.copies || 0) + 1} 
             : c
         ));
-        handleCopyComponent(componentId);
     });
   }
 
   const renderSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {Array.from({ length: 2 }).map((_, i) => (
-        <Card key={i}>
+        <Card key={i} className="bg-card">
             <CardContent className="p-0 aspect-[4/3] bg-muted/40 rounded-t-lg">
                 <Skeleton className="w-full h-full" />
             </CardContent>
@@ -89,8 +90,8 @@ export function CommunityGallery() {
   );
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-full max-w-7xl mx-auto mt-16">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">From the Community</h2>
           <p className="text-sm text-muted-foreground">Explore what the community is building.</p>

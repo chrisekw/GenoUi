@@ -2,7 +2,7 @@
 'use client';
 
 import * as React from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { getComponentById } from '@/app/actions';
 import type { GalleryItem } from '@/lib/gallery-items';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,6 +10,7 @@ import { ComponentPreview } from '@/components/app/component-preview';
 
 export default function ComponentDetailPage() {
     const params = useParams();
+    const router = useRouter();
     const id = params.id as string;
     const [component, setComponent] = React.useState<GalleryItem | null>(null);
     const [loading, setLoading] = React.useState(true);
@@ -37,12 +38,12 @@ export default function ComponentDetailPage() {
     }, [id]);
 
     const renderSkeleton = () => (
-        <div className="p-8">
+        <div className="p-8 h-screen">
             <Skeleton className="h-12 w-1/2 mb-4" />
             <Skeleton className="h-6 w-3/4 mb-8" />
-            <div className="border rounded-lg">
+            <div className="border rounded-lg h-[70vh]">
                 <div className="h-12 bg-muted border-b" />
-                <Skeleton className="aspect-video w-full" />
+                <Skeleton className="h-full w-full" />
             </div>
         </div>
     );
@@ -57,14 +58,14 @@ export default function ComponentDetailPage() {
 
     if (error || !component) {
        return (
-            <main className="flex-1 flex items-center justify-center">
+            <main className="flex-1 flex items-center justify-center h-screen">
                 <p>{error || 'Component could not be loaded.'}</p>
             </main>
         )
     }
 
     return (
-        <main>
+        <main className="h-full">
             <ComponentPreview
                 code={component.code}
                 previewHtml={component.previewHtml}
@@ -72,7 +73,7 @@ export default function ComponentDetailPage() {
                 isLoading={false}
                 framework={component.framework}
                 prompt={component.prompt}
-                onBack={() => window.history.back()}
+                onBack={() => router.back()}
                 onFrameworkChange={() => { /* Framework change can be handled here if needed */}}
                 isPublished
             />

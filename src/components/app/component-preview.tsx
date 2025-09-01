@@ -168,7 +168,7 @@ export function ComponentPreview({
     return (
         <>
             <Tabs defaultValue="preview" className="w-full h-full flex flex-col">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 pt-4 border-b">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-2 border-b">
                 <div className="flex items-center gap-4 w-full sm:w-auto">
                     <Button variant="ghost" size="icon" onClick={onBack}>
                     <ArrowLeft />
@@ -240,7 +240,7 @@ export function ComponentPreview({
                 <TabsContent value="code" className="flex-1 overflow-y-auto p-4 h-full">
                     <CodeDisplay code={code} framework={framework} />
                 </TabsContent>
-                <TabsContent value="suggestions" className="p-4">
+                <TabsContent value="suggestions" className="flex-1 overflow-y-auto p-4">
                     <Alert>
                     <Lightbulb className="h-4 w-4" />
                     <AlertTitle>Layout Suggestions</AlertTitle>
@@ -294,7 +294,7 @@ export function ComponentPreview({
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-card rounded-lg border shadow-sm">
       {renderContent()}
     </div>
   )

@@ -132,7 +132,7 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
                             className="hidden"
                             accept="image/*"
                         />
-                        <Button size="icon" onClick={() => onGenerate(prompt, 'html', imageUrl || undefined)} disabled={isLoading || isEnhancing} className="rounded-lg w-9 h-9 bg-black text-white hover:bg-gray-800">
+                        <Button size="icon" onClick={() => onGenerate(prompt, 'html', imageUrl || undefined)} disabled={isLoading || isEnhancing} className="rounded-lg w-9 h-9 bg-primary text-primary-foreground hover:bg-primary/90">
                             <ArrowUp className="h-5 w-5" />
                         </Button>
                     </div>
@@ -200,18 +200,19 @@ export function PageContent() {
         let finalPrompt = currentPrompt;
         let result;
 
-        if (currentImageUrl) {
+        if (currentImageUrl && !currentPrompt.includes("image provided")) {
              const promptResult = await handleImageUpload({ imageUrl: currentImageUrl });
              finalPrompt = promptResult.prompt;
              setPrompt(finalPrompt); // Update UI to show the new prompt
         }
 
-        result = await handleGenerateComponent({ prompt: finalPrompt, framework: currentFramework });
+        result = await handleGenerateComponent({ prompt: finalPrompt, framework: currentFramework, imageUrl: currentImageUrl });
         
         setGeneratedCode(result.code);
         setPreviewHtml(result.previewHtml || result.code);
         setLayoutSuggestions(result.suggestions);
         setFramework(currentFramework);
+        setPrompt(finalPrompt);
         if (currentImageUrl) {
             setImageUrl(currentImageUrl);
         }

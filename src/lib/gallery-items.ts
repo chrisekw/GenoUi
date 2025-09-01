@@ -20,4 +20,5 @@ export interface GalleryItem {
 export type GalleryItemCreate = Omit<GalleryItem, 'id' | 'previewHtml' | 'createdAt'>;
 
 
+// In-memory array to simulate a database
 export const galleryItems: GalleryItem[] = [];

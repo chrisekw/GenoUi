@@ -12,8 +12,10 @@ export default function AppLayout({
   return (
     <div className="flex h-screen w-full flex-col bg-background">
       <Header />
-      <main className="flex flex-1 flex-col overflow-hidden">
-        {children}
+      <main className="flex flex-1 flex-col overflow-auto">
+        <div className="flex-1 p-4 md:p-6">
+          {children}
+        </div>
       </main>
     </div>
   );

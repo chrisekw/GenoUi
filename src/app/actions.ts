@@ -7,7 +7,7 @@ import { enhancePrompt, EnhancePromptOutput, EnhancePromptInput } from '@/ai/flo
 import { animatePrompt, AnimatePromptOutput, AnimatePromptInput } from '@/ai/flows/animate-prompt-flow';
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
 import { generatePromptFromImage } from '@/ai/flows/generate-prompt-from-image-flow';
-import type { GalleryItem } from '@/lib/gallery-items';
+import { galleryItems, type GalleryItem } from '@/lib/gallery-items';
 
 // NOTE: Login and Signup actions are now handled on the client-side
 // to ensure proper session persistence with Firebase Auth.
@@ -98,22 +98,37 @@ export async function handleCloneUrl(
     }
 }
 
-// These actions are now stubs as there is no database connected.
-// They return empty or success states to prevent the UI from crashing.
+// These actions simulate a database using an in-memory array.
+// In a real application, you would replace this with calls to Firestore or another database.
 
-export async function getCommunityComponents(limit_?: number): Promise<GalleryItem[]> {
-    return [];
+export async function getCommunityComponents(limit?: number): Promise<GalleryItem[]> {
+    // Simulate fetching from a database, returning in reverse chronological order
+    const sorted = [...galleryItems].sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+    return limit ? sorted.slice(0, limit) : sorted;
 }
 
 export async function getComponentById(id: string): Promise<GalleryItem | null> {
-    return null;
+    // Simulate fetching a single component by its ID
+    const component = galleryItems.find(c => c.id === id) || null;
+    return component;
 }
 
 export async function handleLikeComponent(componentId: string): Promise<{ success: boolean, likes?: number }> {
-    return { success: true };
+    // Simulate liking a component
+    const component = galleryItems.find(c => c.id === componentId);
+    if (component) {
+        component.likes = (component.likes || 0) + 1;
+        return { success: true, likes: component.likes };
+    }
+    return { success: false };
 }
 
 export async function handleCopyComponent(componentId: string) {
+    // Simulate incrementing a copy counter
+    const component = galleryItems.find(c => c.id === componentId);
+    if (component) {
+        component.copies = (component.copies || 0) + 1;
+    }
     return;
 }
 
@@ -126,5 +141,15 @@ export async function handlePublishComponent(componentData: {
     category: string;
     previewHtml: string;
 }): Promise<{success: boolean, message?: string}> {
+    // Simulate publishing a component
+    const newComponent: GalleryItem = {
+        id: `comp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        ...componentData,
+        likes: 0,
+        copies: 0,
+        createdAt: new Date(),
+        framework: 'html', // Assuming HTML for now
+    };
+    galleryItems.push(newComponent);
     return { success: true };
 }
