@@ -7,7 +7,7 @@ import { PageContent } from '@/components/app/page-content';
 export default function DashboardPage() {
   // This is the new home for the main component generator UI for logged-in users.
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full flex-1 flex flex-col">
         <React.Suspense fallback={<PageSkeleton />}>
             <PageContent />
         </React.Suspense>

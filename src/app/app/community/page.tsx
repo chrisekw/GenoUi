@@ -100,6 +100,7 @@ export default function CommunityFeedPage() {
     <Card className="flex-1 border-none shadow-none bg-transparent">
         <CardHeader>
             <CardTitle>Community Gallery</CardTitle>
+            <CardDescription>Explore components created by the community.</CardDescription>
         </CardHeader>
         <CardContent>
             {loading ? renderSkeleton() : (

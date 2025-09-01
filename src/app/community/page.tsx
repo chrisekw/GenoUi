@@ -3,14 +3,13 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
-import { Heart, Copy, GitFork, MoreVertical } from 'lucide-react';
+import { Heart, Copy, GitFork, MoreVertical, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import type { GalleryItem } from '@/lib/gallery-items';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ComponentRenderer } from '@/components/app/component-renderer';
 import { useToast } from '@/hooks/use-toast';
 import { handleLikeComponent, handleCopyComponent, getCommunityComponents } from '@/app/actions';
-import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,8 +17,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Logo } from '@/components/icons/logo';
 
-export default function CommunityFeedPage() {
+export default function PublicCommunityFeedPage() {
   const { toast } = useToast();
   const [components, setComponents] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,52 +42,34 @@ export default function CommunityFeedPage() {
   }, [toast]);
 
   const onLikeClick = (componentId: string) => {
-    // Optimistic UI update
-    setComponents(prev => prev.map(c => 
-        c.id === componentId 
-        ? {...c, likes: (c.likes || 0) + 1} 
-        : c
-    ));
-
-    startTransition(async () => {
-        const result = await handleLikeComponent(componentId);
-        if (!result.success) {
-            toast({ title: 'Failed to update like', variant: 'destructive' });
-            // Revert optimistic update on failure
-            setComponents(prev => prev.map(c => 
-                c.id === componentId 
-                ? {...c, likes: (c.likes || 0) - 1} 
-                : c
-            ));
-        }
-    });
+    toast({ title: "Please sign in to like components."});
   }
 
   const onCopyClick = (code: string, componentId: string) => {
     navigator.clipboard.writeText(code);
     toast({ title: 'Code copied to clipboard!' });
     
-    startTransition(() => {
+    startTransition(async () => {
+        await handleCopyComponent(componentId);
         setComponents(prev => prev.map(c => 
             c.id === componentId 
             ? {...c, copies: (c.copies || 0) + 1} 
             : c
         ));
-        handleCopyComponent(componentId);
     });
   }
 
   const renderSkeleton = () => (
     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-             <Card key={i} className="bg-transparent border-none shadow-none">
-                <CardContent className="p-0 aspect-[4/3] bg-muted/40 rounded-lg">
-                    <Skeleton className="w-full h-full" />
+             <Card key={i} className="bg-neutral-900/50 border-neutral-800 rounded-2xl shadow-none">
+                <CardContent className="p-0 aspect-[4/3] bg-neutral-800/60 rounded-t-2xl">
+                    <Skeleton className="w-full h-full bg-neutral-700/50" />
                 </CardContent>
-                <CardFooter className="p-0 pt-4">
+                <CardFooter className="p-4">
                     <div className="w-full">
-                        <Skeleton className="h-5 w-3/4 mb-2" />
-                        <Skeleton className="h-4 w-1/2" />
+                        <Skeleton className="h-5 w-3/4 mb-2 bg-neutral-700/50" />
+                        <Skeleton className="h-4 w-1/2 bg-neutral-700/50" />
                     </div>
                 </CardFooter>
             </Card>
@@ -97,71 +79,93 @@ export default function CommunityFeedPage() {
 
 
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 bg-background animate-fade-in">
-    <div className="grid w-full max-w-7xl mx-auto gap-2">
-        <h1 className="text-3xl font-semibold">Community Gallery</h1>
-        <p className="text-muted-foreground">
-        Explore components created by the community.
-        </p>
-    </div>
-    
-    {loading ? renderSkeleton() : (
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full max-w-7xl mx-auto">
-        {components.length === 0 ? (
-            <div className="col-span-full text-center py-12">
-                <p className="text-muted-foreground">No components published yet. Be the first!</p>
-            </div>
-        ) : (
-            components.map((item, index) => (
-            <Card 
-            key={item.id}
-            className="group relative flex flex-col overflow-hidden transition-all duration-300 animate-fade-in-up bg-transparent border-none shadow-none"
-            style={{ animationDelay: `${index * 100}ms`}}
-            >
-                <CardContent className="p-0 aspect-[4/3] flex-grow bg-muted/20 rounded-lg overflow-hidden border">
-                <Link href={`/component/${item.id}`} className="block w-full h-full bg-background overflow-hidden">
-                    <ComponentRenderer html={item.previewHtml} />
-                </Link>
-                </CardContent>
-                <CardFooter className="flex items-center justify-between p-0 pt-4">
-                    <div className='flex-grow overflow-hidden'>
-                    <p className="font-semibold truncate text-sm">{item.name}</p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                        <Heart className="h-3 w-3"/>
-                        <span>{item.likes || 0}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                        <GitFork className="h-3 w-3"/>
-                        <span>{item.copies || 0}</span>
-                        </div>
-                    </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => onLikeClick(item.id)} disabled={isPending}>
-                            <Heart className="mr-2 h-4 w-4" />
-                            <span>Like</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onCopyClick(item.code, item.id)}>
-                            <Copy className="mr-2 h-4 w-4" />
-                            <span>Copy Code</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </CardFooter>
-            </Card>
-            ))
-        )}
+    <div className="bg-black text-white min-h-screen">
+       <header className="sticky top-0 z-50 bg-black/50 backdrop-blur-sm">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <Link href="/landing" className="flex items-center gap-2">
+            <Logo className="w-7 h-7 text-white" />
+            <span className="text-xl font-bold">GenoUI</span>
+          </Link>
+          <Button asChild variant="secondary">
+            <Link href="/signup">
+                Get Started Free
+                <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
-    )}
-    </main>
+      </header>
+
+        <main className="container mx-auto px-6 py-16 md:py-24">
+            <div className="text-center mb-16">
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-balance bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
+                    Community Gallery
+                </h1>
+                <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-neutral-300 text-balance">
+                    Explore an ever-growing collection of UI components generated by the GenoUI community.
+                </p>
+            </div>
+        
+            {loading ? renderSkeleton() : (
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full">
+                {components.length === 0 ? (
+                    <div className="col-span-full text-center py-12">
+                        <p className="text-neutral-400">No components published yet. Be the first!</p>
+                        <Button asChild size="lg" className="mt-4">
+                           <Link href="/signup">Start Generating</Link>
+                        </Button>
+                    </div>
+                ) : (
+                    components.map((item, index) => (
+                    <Card 
+                    key={item.id}
+                    className="group relative flex flex-col overflow-hidden transition-all duration-300 animate-fade-in-up bg-neutral-900/50 border border-neutral-800 rounded-2xl hover:border-primary/50 hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-1"
+                    style={{ animationDelay: `${index * 50}ms`}}
+                    >
+                        <CardContent className="p-0 aspect-[4/3] flex-grow bg-neutral-800/40 rounded-t-2xl overflow-hidden border-b border-neutral-800">
+                        <Link href={`/component/${item.id}`} className="block w-full h-full bg-black overflow-hidden">
+                            <ComponentRenderer html={item.previewHtml} />
+                        </Link>
+                        </CardContent>
+                        <CardFooter className="flex items-center justify-between p-4">
+                            <div className='flex-grow overflow-hidden'>
+                            <p className="font-semibold truncate text-sm text-white">{item.name}</p>
+                            <div className="flex items-center gap-2 text-xs text-neutral-400">
+                                <div className="flex items-center gap-1">
+                                <Heart className="h-3 w-3"/>
+                                <span>{item.likes || 0}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                <GitFork className="h-3 w-3"/>
+                                <span>{item.copies || 0}</span>
+                                </div>
+                            </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-neutral-400 hover:bg-neutral-800 hover:text-white">
+                                    <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="bg-neutral-900 border-neutral-700 text-white">
+                                    <DropdownMenuItem onClick={() => onLikeClick(item.id)} disabled={isPending}>
+                                    <Heart className="mr-2 h-4 w-4" />
+                                    <span>Like</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => onCopyClick(item.code, item.id)}>
+                                    <Copy className="mr-2 h-4 w-4" />
+                                    <span>Copy Code</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        </CardFooter>
+                    </Card>
+                    ))
+                )}
+                </div>
+            )}
+        </main>
+    </div>
   );
 }
