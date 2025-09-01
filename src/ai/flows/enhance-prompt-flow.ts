@@ -62,7 +62,11 @@ RULES:
 4) Include optional motion guidance but keep it subtle by default.
 5) Output JSON only.
 6) No explanations.`,
-  prompt: `user_prompt: {{{user_prompt}}}`,
+  prompt: `Based on the following user request, generate the required JSON output.
+
+User Request:
+"{{{user_prompt}}}"
+`,
 });
 
 const enhancePromptFlow = ai.defineFlow(
