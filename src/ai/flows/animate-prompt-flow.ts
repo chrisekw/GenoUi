@@ -17,9 +17,6 @@ import {z} from 'genkit';
 
 const AnimatePromptInputSchema = z.object({
   user_prompt: z.string().describe('The user-provided prompt for a UI component.'),
-  library: z.enum(['framer-motion', 'css']).default('framer-motion'),
-  motion_level: z.enum(['subtle', 'balanced', 'rich']).default('balanced'),
-  respect_reduced_motion: z.boolean().default(true),
 });
 export type AnimatePromptInput = z.infer<typeof AnimatePromptInputSchema>;
 
@@ -27,25 +24,13 @@ const AnimatePromptOutputSchema = z.object({
   enhanced_prompt: z
     .string()
     .describe('The final build prompt including animation requirements'),
-  animation_spec: z.object({
-    principles: z.array(z.string()).describe('The animation principles applied.'),
-    tokens: z.record(z.any()).describe('The timing and easing tokens.'),
-    patterns: z.array(z.record(z.any())).describe('The specific animation patterns for elements.'),
-  })
 });
 export type AnimatePromptOutput = z.infer<typeof AnimatePromptOutputSchema>;
 
 export async function animatePrompt(
-  input: Omit<AnimatePromptInput, 'library' | 'motion_level' | 'respect_reduced_motion'>
+  input: AnimatePromptInput
 ): Promise<AnimatePromptOutput> {
-  // Use default values for the flow
-  const fullInput: AnimatePromptInput = {
-    ...input,
-    library: 'framer-motion',
-    motion_level: 'balanced',
-    respect_reduced_motion: true,
-  };
-  return animatePromptFlow(fullInput);
+  return animatePromptFlow(input);
 }
 
 const animatePromptTemplate = ai.definePrompt({
@@ -60,9 +45,13 @@ RULES:
 2) Define motion for: mount/unmount, hover/focus/press, list reordering, modal/drawer, toast, and page transitions—only when relevant.
 3) Specify timing (easing, duration ms, stagger), origins, and interactive micro-interactions.
 4) Include accessibility notes: respect \`prefers-reduced-motion\`, maintain focus visibility, avoid motion that impairs readability.
-5) Output JSON only.
+5) Output JSON with a single key "enhanced_prompt" containing the new prompt as a string.
 6) No extra commentary.`,
-  prompt: `user_prompt: {{{user_prompt}}}`,
+  prompt: `Based on the following user request, generate the required JSON output.
+
+User Request:
+"{{{user_prompt}}}"
+`,
 });
 
 const animatePromptFlow = ai.defineFlow(

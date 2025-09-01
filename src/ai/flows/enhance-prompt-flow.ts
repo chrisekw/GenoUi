@@ -17,35 +17,18 @@ import {z} from 'genkit';
 
 const EnhancePromptInputSchema = z.object({
   user_prompt: z.string().describe('The user-provided prompt for a UI component.'),
-  framework: z.enum(['react', 'vue', 'svelte', 'html']).default('react'),
-  styling: z.enum(['tailwind', 'shadcn', 'css-modules']).default('tailwind'),
-  tone: z.enum(['minimal', 'futuristic', 'playful']).default('futuristic'),
 });
 export type EnhancePromptInput = z.infer<typeof EnhancePromptInputSchema>;
 
 const EnhancePromptOutputSchema = z.object({
   enhanced_prompt: z.string().describe('The polished, detailed build prompt.'),
-  acceptance_criteria: z.array(z.string()).describe('An array of acceptance criteria.'),
-  design_tokens: z.object({
-    color: z.record(z.string()).optional(),
-    radius: z.string().optional(),
-    shadow: z.string().optional(),
-    spacing: z.string().optional(),
-    font: z.record(z.string()).optional(),
-  }).describe('The suggested design tokens.'),
 });
 export type EnhancePromptOutput = z.infer<typeof EnhancePromptOutputSchema>;
 
 export async function enhancePrompt(
-  input: Omit<EnhancePromptInput, 'framework' | 'styling' | 'tone'>
+  input: EnhancePromptInput
 ): Promise<EnhancePromptOutput> {
-  const fullInput: EnhancePromptInput = {
-    ...input,
-    framework: 'react',
-    styling: 'tailwind',
-    tone: 'futuristic',
-  };
-  return enhancePromptFlow(fullInput);
+  return enhancePromptFlow(input);
 }
 
 const enhancePromptTemplate = ai.definePrompt({
@@ -56,11 +39,11 @@ const enhancePromptTemplate = ai.definePrompt({
 ROLE: You rewrite a basic or vague UI request into a sharp, industry-standard, futuristic prompt that consistently produces premium UI.
 
 RULES:
-1) Preserve the original intent; enrich with: layout, visual hierarchy, tokens (colors/radii/shadows/spacing), component states, responsiveness, a11y, and testable acceptance criteria.
+1) Preserve the original intent; enrich with: layout, visual hierarchy, tokens (colors/radii/shadows/spacing), component states, responsiveness, and a11y.
 2) Reference modern patterns (ShadCN/Radix semantics, WCAG AA contrast, keyboard navigation).
 3) Prefer semantic HTML and composable components.
 4) Include optional motion guidance but keep it subtle by default.
-5) Output JSON only.
+5) Output JSON with a single key "enhanced_prompt" containing the new prompt as a string.
 6) No explanations.`,
   prompt: `Based on the following user request, generate the required JSON output.
 

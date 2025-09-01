@@ -3,8 +3,8 @@
 import { generateUiComponent, GenerateUiComponentInput } from '@/ai/flows/generate-ui-component';
 import { optimizeComponentLayout } from '@/ai/flows/optimize-component-layout';
 import { cloneUrl, CloneUrlInput } from '@/ai/flows/clone-url-flow';
-import { enhancePrompt, EnhancePromptOutput } from '@/ai/flows/enhance-prompt-flow';
-import { animatePrompt, AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
+import { enhancePrompt, EnhancePromptOutput, EnhancePromptInput } from '@/ai/flows/enhance-prompt-flow';
+import { animatePrompt, AnimatePromptOutput, AnimatePromptInput } from '@/ai/flows/animate-prompt-flow';
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
 import { generatePromptFromImage } from '@/ai/flows/generate-prompt-from-image-flow';
 import type { GalleryItem } from '@/lib/gallery-items';
@@ -58,9 +58,9 @@ export async function handleImageUpload(input: { imageUrl: string }): Promise<{ 
 }
 
 
-export async function handleEnhancePrompt(prompt: string): Promise<EnhancePromptOutput> {
+export async function handleEnhancePrompt(input: EnhancePromptInput): Promise<EnhancePromptOutput> {
     try {
-        const result = await enhancePrompt({ user_prompt: prompt });
+        const result = await enhancePrompt(input);
         return result;
     } catch (error: any) {
         console.error('Error in enhance prompt flow:', error);
@@ -68,9 +68,9 @@ export async function handleEnhancePrompt(prompt: string): Promise<EnhancePrompt
     }
 }
 
-export async function handleAnimatePrompt(prompt: string): Promise<AnimatePromptOutput> {
+export async function handleAnimatePrompt(input: AnimatePromptInput): Promise<AnimatePromptOutput> {
     try {
-        const result = await animatePrompt({ user_prompt: prompt });
+        const result = await animatePrompt(input);
         return result;
     } catch (error: any) {
         console.error('Error in animate prompt flow:', error);

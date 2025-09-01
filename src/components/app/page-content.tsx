@@ -43,15 +43,18 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
     action();
   };
   
-  const enhancePromptAction = async (enhancer: (p: string) => Promise<AnimatePromptOutput | EnhancePromptOutput>, successMessage: string) => {
+  const enhancePromptAction = async (
+    enhancer: (input: { user_prompt: string }) => Promise<AnimatePromptOutput | EnhancePromptOutput>, 
+    successMessage: string
+  ) => {
     if (!prompt.trim()) {
       toast({ title: 'Please enter a prompt first.', variant: 'destructive'});
       return;
     }
     setIsEnhancing(true);
     try {
-      const result = await enhancer(prompt);
-      if (result && 'enhanced_prompt' in result) {
+      const result = await enhancer({ user_prompt: prompt });
+      if (result && result.enhanced_prompt) {
         setPrompt(result.enhanced_prompt);
         toast({ title: successMessage, description: 'Your prompt has been upgraded.' });
       } else {
