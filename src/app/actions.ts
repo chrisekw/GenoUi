@@ -60,7 +60,7 @@ export async function handleImageUpload(input: { imageUrl: string }): Promise<{ 
 
 export async function handleEnhancePrompt(prompt: string): Promise<EnhancePromptOutput> {
     try {
-        const result = await enhancePrompt({ prompt });
+        const result = await enhancePrompt({ user_prompt: prompt });
         return result;
     } catch (error: any) {
         console.error('Error in enhance prompt flow:', error);
@@ -70,7 +70,7 @@ export async function handleEnhancePrompt(prompt: string): Promise<EnhancePrompt
 
 export async function handleAnimatePrompt(prompt: string): Promise<AnimatePromptOutput> {
     try {
-        const result = await animatePrompt({ prompt });
+        const result = await animatePrompt({ user_prompt: prompt });
         return result;
     } catch (error: any) {
         console.error('Error in animate prompt flow:', error);

@@ -16,40 +16,53 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AnimatePromptInputSchema = z.object({
-  prompt: z.string().describe('The user-provided prompt for a UI component.'),
+  user_prompt: z.string().describe('The user-provided prompt for a UI component.'),
+  library: z.enum(['framer-motion', 'css']).default('framer-motion'),
+  motion_level: z.enum(['subtle', 'balanced', 'rich']).default('balanced'),
+  respect_reduced_motion: z.boolean().default(true),
 });
 export type AnimatePromptInput = z.infer<typeof AnimatePromptInputSchema>;
 
 const AnimatePromptOutputSchema = z.object({
-  enhancedPrompt: z
+  enhanced_prompt: z
     .string()
-    .describe('The AI-enhanced prompt with detailed animation and interaction specifications.'),
+    .describe('The final build prompt including animation requirements'),
+  animation_spec: z.object({
+    principles: z.array(z.string()).describe('The animation principles applied.'),
+    tokens: z.record(z.any()).describe('The timing and easing tokens.'),
+    patterns: z.array(z.record(z.any())).describe('The specific animation patterns for elements.'),
+  })
 });
 export type AnimatePromptOutput = z.infer<typeof AnimatePromptOutputSchema>;
 
 export async function animatePrompt(
-  input: AnimatePromptInput
+  input: Omit<AnimatePromptInput, 'library' | 'motion_level' | 'respect_reduced_motion'>
 ): Promise<AnimatePromptOutput> {
-  return animatePromptFlow(input);
+  // Use default values for the flow
+  const fullInput: AnimatePromptInput = {
+    ...input,
+    library: 'framer-motion',
+    motion_level: 'balanced',
+    respect_reduced_motion: true,
+  };
+  return animatePromptFlow(fullInput);
 }
 
 const animatePromptTemplate = ai.definePrompt({
   name: 'animatePromptTemplate',
   input: {schema: AnimatePromptInputSchema},
   output: {schema: AnimatePromptOutputSchema},
-  prompt: `You are a specialist in UI/UX motion design. Your task is to take a user's prompt for a UI component and enhance it by adding detailed descriptions of sleek, modern, and industry-standard animations and micro-interactions.
+  system: `SYSTEM: GenUI.AnimatePrompt
+ROLE: You transform a plain UI prompt into an animation-aware prompt that yields tasteful, accessible motion.
 
-Rewrite the following prompt, integrating fluid animations that enhance the user experience.
-
-- **Focus on Purpose**: Animations should be meaningful. Describe loading states, transitions, hover effects, and feedback animations.
-- **Be Specific**: Mention properties like timing (e.g., 'a quick 200ms ease-out transition'), property changes (e.g., 'background color fades in'), and transform effects (e.g., 'scales up slightly on hover').
-- **Modern Aesthetics**: The animations should feel professional, smooth, and non-intrusive. Think subtle, not flashy.
-
-Original Prompt:
-"{{{prompt}}}"
-
-Rewrite the prompt into a single, cohesive paragraph that seamlessly blends the original request with your animation and interaction design expertise. Do not use lists or bullet points. Your response must only be the enhanced prompt itself.
-`,
+RULES:
+1) Keep the user’s intent intact; **add** motion specs, don’t rewrite functionality.
+2) Define motion for: mount/unmount, hover/focus/press, list reordering, modal/drawer, toast, and page transitions—only when relevant.
+3) Specify timing (easing, duration ms, stagger), origins, and interactive micro-interactions.
+4) Include accessibility notes: respect \`prefers-reduced-motion\`, maintain focus visibility, avoid motion that impairs readability.
+5) Output JSON only.
+6) No extra commentary.`,
+  prompt: `user_prompt: {{{user_prompt}}}`,
 });
 
 const animatePromptFlow = ai.defineFlow(
@@ -63,7 +76,6 @@ const animatePromptFlow = ai.defineFlow(
     if (!output) {
       throw new Error("Failed to generate animated prompt.");
     }
-    // Ensure the output matches the schema exactly.
-    return { enhancedPrompt: output.enhancedPrompt };
+    return output;
   }
 );

@@ -8,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import {
   ArrowUp,
   Image as ImageIcon,
-  CodeXml,
   Clapperboard,
   X,
   Sparkles,
@@ -19,22 +18,11 @@ import { Textarea } from '../ui/textarea';
 import { ComponentPreview } from './component-preview';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CommunityGallery } from './community-gallery';
-import { AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
-import { EnhancePromptOutput } from '@/ai/flows/enhance-prompt-flow';
+import type { AnimatePromptOutput } from '@/ai/flows/animate-prompt-flow';
+import type { EnhancePromptOutput } from '@/ai/flows/enhance-prompt-flow';
 
 
 export type Framework = 'html' | 'tailwindcss';
-
-const samplePrompts = [
-    "A sleek, futuristic dashboard UI with a dark theme. It should have a sidebar navigation with glowing icons, a main content area with several data visualization widgets (like line charts and donut charts), and a header with a search bar and user profile dropdown. Use a color palette of dark blues, purples, and electric pink for accents.",
-    "A minimalist e-commerce product page for a high-end watch. The design should be clean and luxurious, with a large product image on the left and product details (name, price, description) on the right. Include a 'Add to Cart' button with a subtle hover animation. Use a monochrome color scheme with a gold accent color. The font should be a classic serif.",
-    "A vibrant and friendly sign-up form for a mobile app. The form should have a playful illustration at the top, fields for username, email, and password, and a prominent 'Create Account' button. Use rounded corners for all elements and a bright color palette (e.g., coral, teal, and yellow).",
-    "A professional pricing table for a SaaS product. It should feature three tiers (e.g., Basic, Pro, Enterprise), with a clear list of features for each. The 'Pro' plan should be highlighted as the most popular choice. Use subtle gradients and drop shadows to give the table some depth. Include toggle for monthly/annual pricing.",
-    "A modern, image-centric blog layout. The design should feature a grid of cards, where each card represents a blog post and displays a large featured image, the post title, author, and a short excerpt. The layout should be responsive and collapse into a single column on mobile devices.",
-    "An interactive testimonial slider with a clean, modern design. Each slide should feature a customer's photo, their testimonial, name, and company. Include previous/next buttons and dot navigation. The transition between slides should be a smooth fade and slide effect.",
-    "A sophisticated hero section for a portfolio website. It should have a full-screen background video that plays on a loop, with a headline, a sub-headline, and a call-to-action button overlaid on top. The text should be white with a subtle text shadow to ensure readability.",
-    "A clean and organized settings page with a sidebar menu for different sections (e.g., Profile, Notifications, Billing). The main content area should display the corresponding settings form. Use toggle switches for boolean settings and clean input fields and buttons. The overall design should be simple and intuitive."
-];
 
 interface PromptViewProps {
   prompt: string;
@@ -63,8 +51,8 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
     setIsEnhancing(true);
     try {
       const result = await enhancer(prompt);
-      if (result && result.enhancedPrompt) {
-        setPrompt(result.enhancedPrompt);
+      if (result && 'enhanced_prompt' in result) {
+        setPrompt(result.enhanced_prompt);
         toast({ title: successMessage, description: 'Your prompt has been upgraded.' });
       } else {
          throw new Error("The enhancement process failed to return a valid prompt.");
@@ -79,7 +67,6 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
   
   const suggestionButtons = [
     { icon: ImageIcon, text: 'Upload Image', action: () => handleUploadClick() },
-    { icon: CodeXml, text: 'Random Prompt', action: () => setPrompt(samplePrompts[Math.floor(Math.random() * samplePrompts.length)])},
     { icon: Clapperboard, text: 'Animate Prompt', action: () => enhancePromptAction(handleAnimatePrompt, 'Prompt animated!')},
     { icon: Sparkles, text: 'Enhance Prompt', action: () => enhancePromptAction(handleEnhancePrompt, 'Prompt enhanced!')},
     { icon: LinkIcon, text: 'Clone URL', action: () => toast({ title: 'Coming Soon!', description: 'This feature is under development.'}) },

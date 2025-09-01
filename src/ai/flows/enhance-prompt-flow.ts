@@ -16,42 +16,53 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const EnhancePromptInputSchema = z.object({
-  prompt: z.string().describe('The user-provided prompt for a UI component.'),
+  user_prompt: z.string().describe('The user-provided prompt for a UI component.'),
+  framework: z.enum(['react', 'vue', 'svelte', 'html']).default('react'),
+  styling: z.enum(['tailwind', 'shadcn', 'css-modules']).default('tailwind'),
+  tone: z.enum(['minimal', 'futuristic', 'playful']).default('futuristic'),
 });
 export type EnhancePromptInput = z.infer<typeof EnhancePromptInputSchema>;
 
 const EnhancePromptOutputSchema = z.object({
-  enhancedPrompt: z
-    .string()
-    .describe('The AI-enhanced prompt with detailed design specifications.'),
+  enhanced_prompt: z.string().describe('The polished, detailed build prompt.'),
+  acceptance_criteria: z.array(z.string()).describe('An array of acceptance criteria.'),
+  design_tokens: z.object({
+    color: z.record(z.string()).optional(),
+    radius: z.string().optional(),
+    shadow: z.string().optional(),
+    spacing: z.string().optional(),
+    font: z.record(z.string()).optional(),
+  }).describe('The suggested design tokens.'),
 });
 export type EnhancePromptOutput = z.infer<typeof EnhancePromptOutputSchema>;
 
 export async function enhancePrompt(
-  input: EnhancePromptInput
+  input: Omit<EnhancePromptInput, 'framework' | 'styling' | 'tone'>
 ): Promise<EnhancePromptOutput> {
-  return enhancePromptFlow(input);
+  const fullInput: EnhancePromptInput = {
+    ...input,
+    framework: 'react',
+    styling: 'tailwind',
+    tone: 'futuristic',
+  };
+  return enhancePromptFlow(fullInput);
 }
 
 const enhancePromptTemplate = ai.definePrompt({
   name: 'enhancePromptTemplate',
   input: {schema: EnhancePromptInputSchema},
   output: {schema: EnhancePromptOutputSchema},
-  prompt: `You are a world-class UI/UX design assistant. Your task is to take a user's basic component idea and transform it into a detailed, professional prompt that will guide an AI component generator to produce stunning, industry-standard results.
+  system: `SYSTEM: GenUI.EnhancePrompt
+ROLE: You rewrite a basic or vague UI request into a sharp, industry-standard, futuristic prompt that consistently produces premium UI.
 
-Rewrite the following prompt to be more descriptive, specific, and inspiring. Infuse it with modern design principles, sleek and futuristic aesthetics, and a focus on excellent user experience.
-
-- **Elaborate on the Concept**: Expand on the user's idea. What is the component's purpose? Who is the target audience?
-- **Define the Aesthetics**: Specify color palettes (e.g., dark theme, vibrant accents), typography (e.g., clean sans-serif, elegant serif), spacing (e.g., ample negative space), and overall mood (e.g., luxurious, playful, corporate).
-- **Detail the Interactions**: Describe hover states, animations, micro-interactions, and transitions that would enhance the user experience.
-- **Ensure Responsiveness**: Mention how the component should adapt to different screen sizes.
-- **Use Professional Language**: Employ industry-standard terminology.
-
-Original Prompt:
-"{{{prompt}}}"
-
-Rewrite the prompt to be a single, cohesive paragraph. Do not use lists or bullet points. Your response must only be the enhanced prompt itself.
-`,
+RULES:
+1) Preserve the original intent; enrich with: layout, visual hierarchy, tokens (colors/radii/shadows/spacing), component states, responsiveness, a11y, and testable acceptance criteria.
+2) Reference modern patterns (ShadCN/Radix semantics, WCAG AA contrast, keyboard navigation).
+3) Prefer semantic HTML and composable components.
+4) Include optional motion guidance but keep it subtle by default.
+5) Output JSON only.
+6) No explanations.`,
+  prompt: `user_prompt: {{{user_prompt}}}`,
 });
 
 const enhancePromptFlow = ai.defineFlow(
