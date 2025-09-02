@@ -150,23 +150,13 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
                         </Button>
                     </div>
                 </div>
-                <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="flex items-center justify-center gap-2 flex-wrap">
-                        {suggestionButtons.slice(0, 3).map((item, index) => (
-                            <Button key={index} variant="outline" className="rounded-full h-auto text-sm" onClick={() => handleSuggestionClick(item.action)}>
-                            <item.icon className="h-4 w-4 mr-2" />
-                            <span>{item.text}</span>
-                            </Button>
-                        ))}
-                    </div>
-                    <div className="flex items-center justify-center gap-2 flex-wrap">
-                        {suggestionButtons.slice(3).map((item, index) => (
-                            <Button key={index + 3} variant="outline" className="rounded-full h-auto text-sm" onClick={() => handleSuggestionClick(item.action)}>
-                            <item.icon className="h-4 w-4 mr-2" />
-                            <span>{item.text}</span>
-                            </Button>
-                        ))}
-                    </div>
+                <div className="flex items-center justify-center gap-2 flex-wrap">
+                    {suggestionButtons.map((item, index) => (
+                        <Button key={index} variant="outline" size="sm" className="rounded-full" onClick={() => handleSuggestionClick(item.action)}>
+                        <item.icon className="h-4 w-4 mr-2" />
+                        <span>{item.text}</span>
+                        </Button>
+                    ))}
                 </div>
             </div>
             </main>
