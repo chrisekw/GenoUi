@@ -7,7 +7,10 @@ import { enhancePrompt, EnhancePromptOutput, EnhancePromptInput } from '@/ai/flo
 import { animatePrompt, AnimatePromptOutput, AnimatePromptInput } from '@/ai/flows/animate-prompt-flow';
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
 import { generatePromptFromImage } from '@/ai/flows/generate-prompt-from-image-flow';
-import { galleryItems, type GalleryItem } from '@/lib/gallery-items';
+import { type GalleryItem } from '@/lib/gallery-items';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, limit as firestoreLimit, getDocs, doc, getDoc, updateDoc, increment } from 'firebase/firestore';
+
 
 // NOTE: Login and Signup actions are now handled on the client-side
 // to ensure proper session persistence with Firebase Auth.
@@ -98,38 +101,82 @@ export async function handleCloneUrl(
     }
 }
 
-// These actions simulate a database using an in-memory array.
-// In a real application, you would replace this with calls to Firestore or another database.
-
 export async function getCommunityComponents(limit?: number): Promise<GalleryItem[]> {
-    // Simulate fetching from a database, returning in reverse chronological order
-    const sorted = [...galleryItems].sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
-    return limit ? sorted.slice(0, limit) : sorted;
+    try {
+        const componentsRef = collection(db, 'components');
+        let q;
+        if (limit) {
+            q = query(componentsRef, orderBy('createdAt', 'desc'), firestoreLimit(limit));
+        } else {
+            q = query(componentsRef, orderBy('createdAt', 'desc'));
+        }
+
+        const querySnapshot = await getDocs(q);
+        const components: GalleryItem[] = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            components.push({
+                id: doc.id,
+                ...data,
+                // Convert Firestore Timestamp to JS Date
+                createdAt: data.createdAt?.toDate(),
+            } as GalleryItem);
+        });
+        return components;
+    } catch (error) {
+        console.error("Error fetching community components from Firestore:", error);
+        return []; // Return empty array on error
+    }
 }
 
 export async function getComponentById(id: string): Promise<GalleryItem | null> {
-    // Simulate fetching a single component by its ID
-    const component = galleryItems.find(c => c.id === id) || null;
-    return component;
+    try {
+        const docRef = doc(db, 'components', id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            return {
+                id: docSnap.id,
+                ...data,
+                createdAt: data.createdAt?.toDate(),
+            } as GalleryItem;
+        } else {
+            console.warn(`Component with id ${id} not found.`);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching component by ID from Firestore:", error);
+        return null;
+    }
 }
 
 export async function handleLikeComponent(componentId: string): Promise<{ success: boolean, likes?: number }> {
-    // Simulate liking a component
-    const component = galleryItems.find(c => c.id === componentId);
-    if (component) {
-        component.likes = (component.likes || 0) + 1;
-        return { success: true, likes: component.likes };
+    try {
+        const docRef = doc(db, 'components', componentId);
+        await updateDoc(docRef, {
+            likes: increment(1)
+        });
+        // To return the new like count, we would need another read.
+        // For optimistic UI, we can just return success.
+        return { success: true };
+    } catch (error) {
+        console.error("Error liking component in Firestore:", error);
+        return { success: false };
     }
-    return { success: false };
 }
 
 export async function handleCopyComponent(componentId: string) {
-    // Simulate incrementing a copy counter
-    const component = galleryItems.find(c => c.id === componentId);
-    if (component) {
-        component.copies = (component.copies || 0) + 1;
+     try {
+        const docRef = doc(db, 'components', componentId);
+        await updateDoc(docRef, {
+            copies: increment(1)
+        });
+        return { success: true };
+    } catch (error) {
+        console.error("Error incrementing copy count in Firestore:", error);
+        return { success: false };
     }
-    return;
 }
 
 export async function handlePublishComponent(componentData: {
@@ -141,15 +188,16 @@ export async function handlePublishComponent(componentData: {
     category: string;
     previewHtml: string;
 }): Promise<{success: boolean, message?: string}> {
-    // Simulate publishing a component
-    const newComponent: GalleryItem = {
-        id: `comp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        ...componentData,
-        likes: 0,
-        copies: 0,
-        createdAt: new Date(),
-        framework: 'html', // Assuming HTML for now
-    };
-    galleryItems.push(newComponent);
-    return { success: true };
+    try {
+        await addDoc(collection(db, 'components'), {
+            ...componentData,
+            likes: 0,
+            copies: 0,
+            createdAt: serverTimestamp(),
+        });
+        return { success: true };
+    } catch (error: any) {
+        console.error("Error publishing component to Firestore:", error);
+        return { success: false, message: error.message };
+    }
 }

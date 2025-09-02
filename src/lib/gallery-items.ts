@@ -1,4 +1,6 @@
 
+import { Timestamp } from 'firebase/firestore';
+
 export interface GalleryItem {
   id: string;
   name: string;
@@ -12,7 +14,7 @@ export interface GalleryItem {
   authorImage?: string;
   likes?: number;
   copies?: number;
-  createdAt?: Date;
+  createdAt?: Date | Timestamp; // Allow both for easier handling
   framework: 'html' | 'tailwindcss';
 }
 
@@ -20,5 +22,6 @@ export interface GalleryItem {
 export type GalleryItemCreate = Omit<GalleryItem, 'id' | 'previewHtml' | 'createdAt'>;
 
 
-// In-memory array to simulate a database
+// In-memory array is no longer used, but we'll keep it here for reference
+// or if you need to quickly switch back to mock data.
 export const galleryItems: GalleryItem[] = [];
