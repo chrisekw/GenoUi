@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { componentCategories } from '@/lib/component-categories';
 import { handlePublishComponent } from '@/app/actions';
+import { useAuth } from '@/app/auth-provider';
 
 
 interface ComponentPreviewProps {
@@ -51,6 +52,7 @@ export function ComponentPreview({
   isPublished = false, // Default to false
 }: ComponentPreviewProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isPublishing, setIsPublishing] = React.useState(false);
   const [showPublishDialog, setShowPublishDialog] = React.useState(false);
   const [componentName, setComponentName] = React.useState('');
@@ -90,6 +92,10 @@ export function ComponentPreview({
   };
 
   const handlePublish = async () => {
+    if (!user) {
+        toast({ title: 'You must be logged in to publish.', variant: 'destructive'});
+        return;
+    }
     if (!componentName.trim() || !componentCategory.trim()) {
         toast({ title: 'Name and category are required', variant: 'destructive'});
         return;
@@ -106,6 +112,8 @@ export function ComponentPreview({
             framework,
             category: componentCategory,
             previewHtml: fullPreviewHtml,
+            authorId: user.uid,
+            authorName: user.displayName || 'Anonymous',
         });
 
         if (result.success) {

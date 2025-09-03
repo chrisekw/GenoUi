@@ -187,6 +187,8 @@ export async function handlePublishComponent(componentData: {
     framework: string;
     category: string;
     previewHtml: string;
+    authorId: string;
+    authorName: string;
 }): Promise<{success: boolean, message?: string}> {
     try {
         await addDoc(collection(db, 'components'), {

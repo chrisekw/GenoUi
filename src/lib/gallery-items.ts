@@ -9,8 +9,8 @@ export interface GalleryItem {
   code: string;
   previewHtml?: string;
   category?: string;
-  authorId?: string;
-  authorName?: string;
+  authorId: string;
+  authorName: string;
   authorImage?: string;
   likes?: number;
   copies?: number;
