@@ -54,9 +54,9 @@ export function FirebaseAuthProvider({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4 animate-pulse">
-          <Logo className="h-10 w-10 text-primary" />
-           <span className="text-xl font-bold text-primary">GenoUI</span>
+        <div className="flex items-center gap-2">
+          <Logo className="h-8 w-8 text-primary" />
+          <span className="text-2xl font-bold text-primary">GenoUI</span>
         </div>
       </div>
     );
