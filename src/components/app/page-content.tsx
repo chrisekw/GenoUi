@@ -40,7 +40,7 @@ const samplePrompts = [
 interface PromptViewProps {
   prompt: string;
   setPrompt: (prompt: string) => void;
-  onGenerate: (prompt: string, framework: Framework, imageUrl?: string) => void;
+  onGenerate: () => void;
   isLoading: boolean;
   imageUrl: string | null;
   setImageUrl: (url: string | null) => void;
@@ -161,7 +161,7 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
                             accept="image/*"
                             disabled={isUploading}
                         />
-                        <Button size="icon" onClick={() => onGenerate(prompt, 'html', imageUrl || undefined)} disabled={isLoading || isEnhancing || isUploading} className="rounded-lg w-9 h-9 bg-primary text-primary-foreground hover:bg-primary/90">
+                        <Button size="icon" onClick={onGenerate} disabled={isLoading || isEnhancing || isUploading} className="rounded-lg w-9 h-9 bg-primary text-primary-foreground hover:bg-primary/90">
                             <ArrowUp className="h-5 w-5" />
                         </Button>
                     </div>
@@ -272,7 +272,7 @@ export function PageContent() {
         <PromptView 
             prompt={prompt}
             setPrompt={setPrompt}
-            onGenerate={onGenerate}
+            onGenerate={() => onGenerate(prompt, framework, imageUrl || undefined)}
             isLoading={isLoading}
             imageUrl={imageUrl}
             setImageUrl={setImageUrl}
