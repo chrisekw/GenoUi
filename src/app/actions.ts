@@ -6,7 +6,7 @@ import { cloneUrl, CloneUrlInput } from '@/ai/flows/clone-url-flow';
 import { enhancePrompt, EnhancePromptOutput, EnhancePromptInput } from '@/ai/flows/enhance-prompt-flow';
 import { animatePrompt, AnimatePromptOutput, AnimatePromptInput } from '@/ai/flows/animate-prompt-flow';
 import { replaceImagePlaceholders } from '@/ai/flows/replace-image-placeholders-flow';
-import { generatePromptFromImage } from '@/ai/flows/generate-prompt-from-image-flow';
+import { generatePromptFromImage, GeneratePromptFromImageInput, GeneratePromptFromImageOutput } from '@/ai/flows/generate-prompt-from-image-flow';
 import { type GalleryItem } from '@/lib/gallery-items';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, query, orderBy, limit as firestoreLimit, getDocs, doc, getDoc, updateDoc, increment } from 'firebase/firestore';
@@ -50,7 +50,7 @@ export async function handleGenerateComponent(
   }
 }
 
-export async function handleImageUpload(input: { imageUrl: string }): Promise<{ prompt: string }> {
+export async function handleImageUpload(input: GeneratePromptFromImageInput): Promise<GeneratePromptFromImageOutput> {
     try {
         const result = await generatePromptFromImage(input);
         return result;

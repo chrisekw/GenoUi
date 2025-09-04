@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { handleGenerateComponent, handleEnhancePrompt, handleAnimatePrompt } from '@/app/actions';
+import { handleGenerateComponent, handleEnhancePrompt, handleAnimatePrompt, handleImageUpload } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import {
   ArrowUp,
@@ -13,6 +13,7 @@ import {
   Sparkles,
   Link as LinkIcon,
   CodeXml,
+  Loader2,
 } from 'lucide-react';
 import Image from 'next/image';
 import { Textarea } from '../ui/textarea';
@@ -48,10 +49,11 @@ interface PromptViewProps {
 function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setImageUrl }: PromptViewProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [isEnhancing, setIsEnhancing] = React.useState(false);
+  const [isUploading, setIsUploading] = React.useState(false);
   const { toast } = useToast();
   
   const handleSuggestionClick = (action: () => void) => {
-    if (isLoading || isEnhancing) return;
+    if (isLoading || isEnhancing || isUploading) return;
     action();
   };
   
@@ -81,22 +83,34 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
   };
   
   const suggestionButtons = [
-    { icon: ImageIcon, text: 'Upload Image', action: () => handleUploadClick() },
+    { icon: isUploading ? Loader2 : ImageIcon, text: 'Upload Image', action: () => handleUploadClick(), disabled: isUploading, animate: isUploading },
     { icon: CodeXml, text: 'Random Prompt', action: () => setPrompt(samplePrompts[Math.floor(Math.random() * samplePrompts.length)]) },
     { icon: Clapperboard, text: 'Animate Prompt', action: () => enhancePromptAction(handleAnimatePrompt, 'Prompt animated!')},
     { icon: Sparkles, text: 'Enhance Prompt', action: () => enhancePromptAction(handleEnhancePrompt, 'Prompt enhanced!')},
     { icon: LinkIcon, text: 'Clone URL', action: () => toast({ title: 'Coming Soon!', description: 'This feature is under development.'}) },
   ];
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setIsUploading(true);
       const reader = new FileReader();
-      reader.onload = (loadEvent) => {
+      reader.onload = async (loadEvent) => {
         const result = loadEvent.target?.result as string;
         setImageUrl(result);
-        if(!prompt.trim()) {
-            setPrompt("A component that looks like the image provided.");
+        try {
+            const promptResult = await handleImageUpload({ imageUrl: result });
+            setPrompt(promptResult.prompt);
+            toast({ title: "Image analyzed!", description: "A descriptive prompt has been generated for you." });
+        } catch(e: any) {
+            console.error("Image analysis error:", e);
+            toast({ title: 'Failed to analyze image', description: e.message || 'An unknown error occurred.', variant: 'destructive'});
+            // Keep the image but don't set the prompt
+            if(!prompt.trim()) {
+                setPrompt("A component that looks like the image provided.");
+            }
+        } finally {
+             setIsUploading(false);
         }
       };
       reader.readAsDataURL(file);
@@ -104,6 +118,7 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
   };
 
   const handleUploadClick = () => {
+    if (isUploading) return;
     fileInputRef.current?.click();
   };
   
@@ -144,17 +159,18 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
                             onChange={handleFileChange}
                             className="hidden"
                             accept="image/*"
+                            disabled={isUploading}
                         />
-                        <Button size="icon" onClick={() => onGenerate(prompt, 'html', imageUrl || undefined)} disabled={isLoading || isEnhancing} className="rounded-lg w-9 h-9 bg-primary text-primary-foreground hover:bg-primary/90">
+                        <Button size="icon" onClick={() => onGenerate(prompt, 'html', imageUrl || undefined)} disabled={isLoading || isEnhancing || isUploading} className="rounded-lg w-9 h-9 bg-primary text-primary-foreground hover:bg-primary/90">
                             <ArrowUp className="h-5 w-5" />
                         </Button>
                     </div>
                 </div>
                 <div className="flex items-center justify-center gap-2 flex-wrap">
                     {suggestionButtons.map((item, index) => (
-                        <Button key={index} variant="outline" size="sm" className="rounded-full" onClick={() => handleSuggestionClick(item.action)}>
-                        <item.icon className="h-4 w-4 mr-2" />
-                        <span>{item.text}</span>
+                        <Button key={index} variant="outline" size="sm" className="rounded-full" onClick={() => handleSuggestionClick(item.action)} disabled={item.disabled}>
+                            <item.icon className={`h-4 w-4 mr-2 ${item.animate ? 'animate-spin' : ''}`} />
+                            <span>{item.text}</span>
                         </Button>
                     ))}
                 </div>
@@ -210,19 +226,13 @@ export function PageContent() {
     }
     
     try {
-        let finalPrompt = currentPrompt;
-        let result;
-
-        // The logic for generating a prompt from an image was removed in a previous step.
-        // It should be added back if this functionality is desired. For now, we use the user-provided prompt.
-
-        result = await handleGenerateComponent({ prompt: finalPrompt, framework: currentFramework, imageUrl: currentImageUrl });
+        const result = await handleGenerateComponent({ prompt: currentPrompt, framework: currentFramework, imageUrl: currentImageUrl });
         
         setGeneratedCode(result.code);
         setPreviewHtml(result.previewHtml || result.code);
         setLayoutSuggestions(result.suggestions);
         setFramework(currentFramework);
-        setPrompt(finalPrompt);
+        setPrompt(currentPrompt);
         if (currentImageUrl) {
             setImageUrl(currentImageUrl);
         }
