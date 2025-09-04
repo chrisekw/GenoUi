@@ -168,7 +168,7 @@ function PromptView({ prompt, setPrompt, onGenerate, isLoading, imageUrl, setIma
                 </div>
                 <div className="flex items-center justify-center gap-2 flex-wrap">
                     {suggestionButtons.map((item, index) => (
-                        <Button key={index} variant="outline" size="sm" className="rounded-full" onClick={() => handleSuggestionClick(item.action)} disabled={item.disabled}>
+                        <Button key={index} variant="outline" size="sm" className="rounded-full h-auto py-1 px-3 text-xs" onClick={() => handleSuggestionClick(item.action)} disabled={item.disabled}>
                             <item.icon className={`h-4 w-4 mr-2 ${item.animate ? 'animate-spin' : ''}`} />
                             <span>{item.text}</span>
                         </Button>
