@@ -77,7 +77,7 @@ const faqs = [
 export default function LandingPage() {
   return (
     <div className="bg-black text-white font-body antialiased">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-sm">
+      <header className="fixed top-0 left-0 right-0 z-50">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/landing" className="flex items-center gap-2">
             <Logo className="w-7 h-7 text-white" />
